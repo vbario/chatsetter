@@ -104,6 +104,16 @@ export default {
       return total ? Math.round((done / total) * 100) : 0
     }
   },
+  watch: {
+    '$store.state.identity.personaData': {
+      handler(newVal) {
+        console.log('personaData changed:', newVal);
+        this.updateCompletionStatuses();
+        this.$forceUpdate();
+      },
+      deep: true
+    }
+  },
   methods: {
     handleClick (item) {
       if (item.link) {

@@ -325,5 +325,72 @@ export const actions = {
         this._vm.$root.$emit('setupGuideItemCompleted', { sectionIndex, itemIndex });
       }
     }
+    
+    // After updating any field, check both basic and advanced info
+    const personaDataRef = await this.$fire.database.ref(`persona_data/${uid}`).once('value');
+    const personaData = personaDataRef.val() || {};
+    
+    // Define field categories
+    const basicInfoFields = [
+      'persona_name', 
+      'pronouns', 
+      'persona_occupation', 
+      'persona_company_name', 
+      'persona_company_website', 
+      'persona_company_email', 
+      'persona_company_phone', 
+      'persona_company_description'
+    ];
+    
+    const advancedInfoFields = [
+      'persona_age',
+      'nationality',
+      'persona_race',
+      'persona_languages',
+      'persona_expertise',
+      'persona_interests',
+      'persona_background',
+      'persona_knowledge'
+    ];
+    
+    // Check if a field has a valid value
+    const hasValue = (data, fieldName) => 
+      data[fieldName] && data[fieldName].trim && data[fieldName].trim() !== '';
+    
+    // Count filled fields
+    const filledBasicFields = basicInfoFields.filter(fieldName => hasValue(personaData, fieldName));
+    const filledAdvancedFields = advancedInfoFields.filter(fieldName => hasValue(personaData, fieldName));
+    
+    // BASIC INFO: If more than one basic field is filled, mark "Add basic info" as completed
+    if (filledBasicFields.length > 1) {
+      // Identity section is at index 1, and "Add basic info" is the second item (index 1)
+      const sectionIndex = 1;
+      const itemIndex = 1;
+      
+      // Update the item in the setup guide - both in the database and UI
+      const setupGuidePath = `setupGuides/${uid}/${sectionIndex}/items/${itemIndex}/completed`;
+      await this.$fire.database.ref(setupGuidePath).set(true);
+      
+      // Emit event to notify SetupGuide component to update UI
+      if (this._vm) {
+        this._vm.$root.$emit('setupGuideItemCompleted', { sectionIndex, itemIndex });
+      }
+    }
+    
+    // ADVANCED INFO: If at least one advanced field is filled, mark "Add advanced info" as completed
+    if (filledAdvancedFields.length > 0) {
+      // Identity section is at index 1, and "Add advanced info" is the third item (index 2)
+      const sectionIndex = 1;
+      const itemIndex = 2;
+      
+      // Update the item in the setup guide - both in the database and UI
+      const setupGuidePath = `setupGuides/${uid}/${sectionIndex}/items/${itemIndex}/completed`;
+      await this.$fire.database.ref(setupGuidePath).set(true);
+      
+      // Emit event to notify SetupGuide component to update UI
+      if (this._vm) {
+        this._vm.$root.$emit('setupGuideItemCompleted', { sectionIndex, itemIndex });
+      }
+    }
   },
 }
