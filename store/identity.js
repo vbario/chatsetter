@@ -111,6 +111,23 @@ export const actions = {
       let newValue = item.newValue
       let path = 'memory/' + uid + '/script'
       await this.$fire.database.ref(path).set(newValue)
+      
+      // If there's script content, update the setup guide item for "Add a script to follow"
+      if (newValue && newValue.trim()) {
+        // Script section is at index 2, and "Add a script to follow" is the first item (index 0)
+        const sectionIndex = 2;
+        const itemIndex = 0;
+        
+        // Update the item in the setup guide - both in the database and UI
+        const setupGuidePath = `setupGuides/${uid}/${sectionIndex}/items/${itemIndex}/completed`;
+        await this.$fire.database.ref(setupGuidePath).set(true);
+        
+        // Emit event to notify SetupGuide component to update UI
+        if (this._vm) {
+          this._vm.$root.$emit('setupGuideItemCompleted', { sectionIndex, itemIndex });
+        }
+      }
+      
       return resolve('ok')
     })
   },
@@ -121,6 +138,23 @@ export const actions = {
       let newValue = item.newValue
       let path = 'memory/' + uid + '/objections'
       await this.$fire.database.ref(path).set(newValue)
+      
+      // If there's objections content, update the setup guide item for "Add objections & responses"
+      if (newValue && newValue.trim()) {
+        // Script section is at index 2, and "Add objections & responses" is the second item (index 1)
+        const sectionIndex = 2;
+        const itemIndex = 1;
+        
+        // Update the item in the setup guide - both in the database and UI
+        const setupGuidePath = `setupGuides/${uid}/${sectionIndex}/items/${itemIndex}/completed`;
+        await this.$fire.database.ref(setupGuidePath).set(true);
+        
+        // Emit event to notify SetupGuide component to update UI
+        if (this._vm) {
+          this._vm.$root.$emit('setupGuideItemCompleted', { sectionIndex, itemIndex });
+        }
+      }
+      
       return resolve('ok')
     })
   },
