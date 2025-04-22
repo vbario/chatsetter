@@ -1,0 +1,83 @@
+require('dotenv').config()
+const nodemailer = require('nodemailer')
+const { google } = require('googleapis');
+
+// OAuth2 credentials and configurations
+const CLIENT_ID = process.env.GMAIL_API_CLIENT_ID
+const CLIENT_SECRET = process.env.GMAIL_API_CLIENT_SECRET
+const REDIRECT_URI = `https://developers.google.com/oauthplayground`
+const REFRESH_TOKEN = process.env.GMAIL_REFRESH_TOKEN
+
+const OAuth2 = google.auth.OAuth2;
+const oAuth2Client = new OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+
+// let VCAL_REQUEST_CONTENT = 'BEGIN:VCALENDAR\r\nPRODID:-//ACME/DesktopCalendar//EN\r\nMETHOD:REQUEST\r\n...';
+
+let FROM_EMAIL = 'vlad@chatsetter.ai'
+// let smtp = nodemailer.createTransport({
+//     service: "Gmail",
+//     auth: {
+//         user: FROM_EMAIL,
+//         pass: process.env.GMAIL_APP_PASSWORD
+//     }
+// })
+
+async function sendWaitlistConfirmation(data) {
+  try {
+    // Retrieve a new access token
+    let {toEmail} = data
+    const accessTokenResponse = await oAuth2Client.getAccessToken();
+    const accessToken = accessTokenResponse.token;
+    // Create a Nodemailer transporter using OAuth2
+    let transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        type: 'OAuth2',
+        user: FROM_EMAIL,
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+        refreshToken: REFRESH_TOKEN,
+        accessToken: accessToken,
+      },
+    });
+
+    // Define the email options
+    let mailOptions = {
+      from: FROM_EMAIL,
+      to: toEmail,
+      subject: `ChatSetter: Application received`,
+      text: text,
+      // Alternatively, use HTML content:
+      // html: `<p>${text}</p>`
+    };
+
+    // Send the email
+    let result = await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully. Message ID:', result.messageId);
+  } catch (error) {
+    console.error('Error sending email:', error);
+  }
+}
+
+// let sendWaitlistConfirmation = async (data) => {
+//     let {toEmail} = data
+//     let mailOptions = {
+//         from: FROM_EMAIL, // sender address
+//         to: toEmail, // list of receivers
+//         subject: `ChatSetter: Application received`, // Subject line
+//         html: `<p>Your application for ChatSetter was received. We will get back to you soon! -Vlad from ChatSetter.AI</p>` // plain text body
+//     }
+
+//     await smtp.sendMail(mailOptions, function (err, info) {
+//        if (err) {
+//          console.log('sendWaitlistConfirmation Error', err)
+//        } else {
+//          console.log('sendWaitlistConfirmation success', info);
+//        }
+//     })
+// }
+
+// sendWaitlistConfirmation({toEmail:'vbaranov@tipasoft.com'})
+
+// exports.sendWaitlistConfirmation = sendWaitlistConfirmation

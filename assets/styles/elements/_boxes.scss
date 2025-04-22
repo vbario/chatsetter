@@ -1,0 +1,11 @@
+.auth-box {
+    width: 100%;
+    max-width: 500px;
+}
+
+@media(max-width: 1280px) {
+    .auth-box {
+        outline: none;
+        box-shadow: none !important;
+    }
+}

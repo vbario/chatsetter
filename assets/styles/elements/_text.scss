@@ -1,0 +1,59 @@
+p {
+    font-family: "Nexa";
+    font-weight: 300;
+}
+
+
+h3.feel-title {
+  color: #000000;
+  font-family: Avenir;
+  font-size: 45px;
+  font-weight: bold;
+  letter-spacing: 0;
+  line-height: 45px;
+  text-align: center;
+  text-transform: capitalize;
+  margin-bottom: 12px;
+}
+
+
+.product-1 {
+  color: #000000;
+  font-family: Avenir;
+  font-weight: 300;
+  letter-spacing: normal;
+  font-size: 14px;
+  letter-spacing: 0;
+  line-height: 20px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+.product-price {
+  color: #000000;
+  font-family: Avenir;
+  font-weight: bold;
+  font-size: 18px;
+  letter-spacing: 0;
+  line-height: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.product-description {
+  color: #000000;
+  font-family: Avenir;
+  font-size: 14px;
+  letter-spacing: 0;
+  line-height: 20px;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.landing-page-product {
+  margin-bottom: 90px;
+}
+
+@media (max-width: 840px) {
+  .landing-page-product {
+    margin-bottom: 90px;
+  }
+}
