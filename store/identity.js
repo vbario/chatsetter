@@ -46,6 +46,15 @@ export const mutations = {
   toggleSequenceActive(state, data) {
     console.log('sequence', data)
     state.sequences[data].active = !state.sequences[data].active
+  },
+  updateSetupGuideItem(state, { sectionIndex, itemIndex, completed }) {
+    // This mutation is used by components to update their local state immediately
+    // when a setup item is completed, without waiting for a database refresh
+    if (this.$fire && this.$fire.auth && this.$fire.auth.currentUser) {
+      const uid = this.$fire.auth.currentUser.uid
+      // Update in Firebase (but don't wait for it)
+      this.$fire.database.ref(`setupGuides/${uid}/${sectionIndex}/items/${itemIndex}/completed`).set(completed)
+    }
   }
 }
 
@@ -291,7 +300,7 @@ export const actions = {
     await this.$fire.database.ref(path).set((state.sequences && state.sequences[[sequence]]) ? !state.sequences[sequence].active : true)
     this.commit('identity/toggleSequenceActive', sequence)
   },
-  async setPersonaField({ state }, item) {
+  async setPersonaField({ state, dispatch, commit }, item) {
     console.log('setPersonaField', item)
     let uid = this.$fire.auth.currentUser.uid || 'f'
     let field = item.field
@@ -300,6 +309,21 @@ export const actions = {
     let path = 'persona_data/' + uid + '/' + field
     await this.$fire.database.ref(path).set(value)
     console.log('field set')
-    // this.commit('identity/setPersona', personaData)
+    
+    // If the field is persona_name and has a value, update the setup guide
+    if (field === 'persona_name' && value) {
+      // Identity section is at index 1, and "Add your name" is the first item (index 0)
+      const sectionIndex = 1;
+      const itemIndex = 0;
+      
+      // Update the item in the setup guide - both in the database and UI
+      const setupGuidePath = `setupGuides/${uid}/${sectionIndex}/items/${itemIndex}/completed`;
+      await this.$fire.database.ref(setupGuidePath).set(true);
+      
+      // Emit event to notify SetupGuide component to update UI
+      if (this._vm) {
+        this._vm.$root.$emit('setupGuideItemCompleted', { sectionIndex, itemIndex });
+      }
+    }
   },
 }

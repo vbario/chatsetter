@@ -192,6 +192,18 @@ export default {
   created () {
     this.getMySetupGuide()
     this.updateCompletionStatuses()
+    
+    // Listen for real-time updates to setup guide items
+    this.$root.$on('setupGuideItemCompleted', ({ sectionIndex, itemIndex }) => {
+      if (this.sections[sectionIndex] && this.sections[sectionIndex].items && this.sections[sectionIndex].items[itemIndex]) {
+        this.sections[sectionIndex].items[itemIndex].completed = true;
+        this.saveSetupGuide(); // Save the changes to persist them
+      }
+    });
+  },
+  beforeDestroy() {
+    // Clean up event listener
+    this.$root.$off('setupGuideItemCompleted');
   }
 }
 </script>
