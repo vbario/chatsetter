@@ -33,7 +33,7 @@
               <template v-if="item.completed">✔️</template>
               <template v-else>◻️</template>
             </span>
-            <span @click="handleClick(item)">{{ item.label }}</span>
+            <span @click="handleClick(item, index, idx)">{{ item.label }}</span>
           </li>
         </ul>
       </div>
@@ -77,9 +77,9 @@ export default {
           title: 'Actions',
           open: false,
           items: [
-            { label: 'Review your objective', completed: false, link: '/actions', check: true },
-            { label: 'Enable followup messages (recommended)', completed: false, link: '/actions?followup=true' },
-            { label: 'Enable comment replies (recommended)', completed: false, link: '/actions?commentreplies=true' },
+            { label: 'Review your objective', completed: false, link: '/actions', check: true, autoCheck: true },
+            { label: 'Enable followup messages (recommended)', completed: false, link: '/actions?followup=true', check: true, autoCheck: true },
+            { label: 'Enable comment replies (recommended)', completed: false, link: '/actions?commentreplies=true', check: true, autoCheck: true },
             { label: 'Turn on ChatSetter', completed: false, link: '/actions?turnon=true' }
           ],
         },
@@ -115,7 +115,10 @@ export default {
     }
   },
   methods: {
-    handleClick (item) {
+    handleClick (item, index, idx) {
+      if (item.autoCheck) {
+        this.handleCheck(item, index, idx)
+      }
       if (item.link) {
         this.$router.push(item.link)
       }
