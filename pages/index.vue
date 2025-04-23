@@ -71,6 +71,8 @@ $chatsetterWhite: #ffffff;
 .color-dark-background {
   background-color: $chatsetterGreen !important;
   color: $chatsetterWhite; // For text readability
+  background-image: url('../assets/images/landing-background.jpg');
+  background-size: cover;
 }
 
 /* Logo styles */

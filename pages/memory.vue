@@ -139,8 +139,8 @@ export default {
     border-bottom: 4px solid transparent;
 }
 .page-tab-selected {
-    color: #2196F3;
-    border-bottom: 4px solid #2196F3;
+    color: #26bb2d;
+    border-bottom: 4px solid #26bb2d;
 }
 .identity-heading {
     color: #8d96a7;

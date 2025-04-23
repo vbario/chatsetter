@@ -296,17 +296,17 @@ export default {
   border-top: 1px solid #ddd;
 }
 .sequence-step-word {
-  border: 2px solid #2196F3;
+  border: 2px solid #26bb2d;
   background-color: #fff;
-  color: #2196F3;
+  color: #26bb2d;
 }
 .delete-icon {
   color: #888;
   fill: #888;
 }
 .color-x {
-  color: #2196F3;
-  fill: #2196F3;
+  color: #26bb2d;
+  fill: #26bb2d;
 }
 .bgcg {
   background-color: #fafafa;

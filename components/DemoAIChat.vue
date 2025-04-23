@@ -91,9 +91,9 @@ export default {
     color: #fff;
 }
 .small-button-4 {
-    background-color: #2196F3;
-    outline: #2196F3;
-    border: 1px solid #2196F3;
+    background-color: #5a95f1;
+    outline: #5a95f1;
+    border: 1px solid #5a95f1;
 }
 .small-icon-4 {
     height: 16px;

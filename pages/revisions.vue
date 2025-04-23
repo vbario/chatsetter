@@ -495,11 +495,11 @@ hr {
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: #26bb2d;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
+  box-shadow: 0 0 1px #26bb2d;
 }
 
 input:checked + .slider:before {
@@ -534,13 +534,13 @@ input:checked + .slider:before {
     border-top: 1px solid #eee;
 }
 .small-button-4 {
-    background-color: #2196F3;
-    outline: #2196F3;
-    border: 1px solid #2196F3;
+    background-color: #5a95f1;
+    outline: #5a95f1;
+    border: 1px solid #5a95f1;
 }
 .small-button-5 {
-    background-color: #2196F3;
-    outline: #2196F3;
+    background-color: #5a95f1;
+    outline: #5a95f1;
     width: 100%;
     max-width: 180px;
     align-self: flex-end;

@@ -139,6 +139,7 @@ $chatsetter-white: #ffffff;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background-image: url('../assets/images/landing-background.jpg');
 }
 
 /* Header section */
@@ -234,7 +235,7 @@ $chatsetter-white: #ffffff;
   padding: 0.25rem 0.5rem;
   font-weight: 600;
   border-radius: 8px;
-  background-color: #2196F3;
+  background-color: #26bb2d;
   color: $chatsetter-white;
   cursor: pointer;
 }
