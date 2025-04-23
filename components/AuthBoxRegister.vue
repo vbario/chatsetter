@@ -104,7 +104,7 @@ export default {
 @import url("~/assets/styles/_colors.scss");
 
 /* Brand variables */
-$chatsetter-green: #046c38;          // Primary ChatSetter green
+$chatsetter-green: #503de0;          // Primary ChatSetter green
 $chatsetter-green-dark: darken($chatsetter-green, 10%);
 $chatsetter-light-bg: #f7f7f7;         // Light background for the form container
 $chatsetter-white: #ffffff;
@@ -128,7 +128,7 @@ $chatsetter-border: lighten($chatsetter-green, 40%);
 /* Subtitle styling */
 .subtitle {
   margin-bottom: 0.75rem;   // Corresponds to mb-3
-  color: darken($chatsetter-green, 20%);
+  /*color: darken($chatsetter-green, 20%);*/
 }
 
 /* Input styling */

@@ -70,7 +70,7 @@
 
 <style scoped>
 .hero_ {
-    background-color: #046c38;
+    background-color: #503de0;
 }
 
 .solutions-page {

@@ -25,7 +25,7 @@
             <th>Growth Plan</th>
           </tr>
           <!-- Top Signup Row -->
-          <tr class="signup-top-row">
+          <tr class="signup-top-row no-effects">
             <td></td>
             <td>
               <NuxtLink to="/?register=true">
@@ -132,7 +132,7 @@
             <td class="check">✓</td>
           </tr>
           <!-- Bottom Signup Row -->
-          <tr class="signup-row">
+          <tr class="signup-row no-effects">
             <td class="feature-label"></td>
             <td>
               <!-- <script async
@@ -182,7 +182,7 @@ export default {
 <style lang="scss" scoped>
 /* Brand Variables */
 :root {
-  --chatsetter-green: #046c38;
+  --chatsetter-green: #503de0;
   --chatsetter-light-bg: #f7f7f7;
   --chatsetter-white: #ffffff;
   --chatsetter-text: #333;
@@ -235,9 +235,10 @@ export default {
 }
 
 .pricing-table th {
-  background-color: #e0f0e7; /* lightened green */
+  background-color: #503de0; /* lightened green */
   color: var(--chatsetter-green);
   font-weight: 600;
+  color: #fff;
 }
 
 .feature-label {
@@ -273,7 +274,17 @@ export default {
 }
 
 .pricing-table tr:hover {
-  background-color: #e6f4ee;
+  background-color: #9187e5;
+  color: #fff;
+}
+
+.pricing-table tr{
+  border-radius: 0.375rem
+}
+
+.pricing-table tr.no-effects:hover {
+  background-color: unset;
+  color: unset;
 }
 
 /* Signup Rows */
@@ -335,7 +346,7 @@ export default {
   font-weight: 500;
 }
 /* Button styling */
-/*$chatsetter-green: #046c38;
+/*$chatsetter-green: #503de0;
 $chatsetter-green-dark: darken($chatsetter-green, 10%);
 .button-primary {
   width: 100%;

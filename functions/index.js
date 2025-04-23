@@ -2027,9 +2027,29 @@ let checkAutoResponder = async (uid, igid) => {
   })
 }
 
-// http://127.0.0.1:5001/allen-ea504/us-central1/startGettingUsers
+// http://127.0.0.1:5001/mypage-25a24/us-central1/startGettingUsers
 exports.startGettingUsers = functions.https.onRequest(async (data, context) => {
   await getConversationsUsers('VZ4gFAgu2hfR1EFSuLnvzM7cihd2', false, false, false, true)
+})
+exports.saveUsers = functions.https.onRequest(async (req, res) => {
+  cors(req, res, async () => {
+    console.log('saveUsers body', req.body)
+    let uid = req.body.uid
+    let newUsernames = req.body.data
+    let usernamePath = '/instagram_usernames_by_uid_/' + (uid || 'f')
+    await db.ref(usernamePath).update(newUsernames)
+    res.status(200).send('ok')
+  })
+})
+exports.saveUsersB = functions.https.onRequest(async (req, res) => {
+  cors(req, res, async () => {
+    console.log('saveUsers body', req.body)
+    let uid = req.body.uid
+    let newUsernames = req.body.data
+    let usernamePath = '/instagram_usernames_by_uid_b/' + (uid || 'f')
+    await db.ref(usernamePath).update(newUsernames)
+    res.status(200).send('ok')
+  })
 })
 
 // OAuth, Tokens, etc

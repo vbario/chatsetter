@@ -111,7 +111,7 @@ export default {
 
 <style lang="scss">
 /* Brand Variables */
-$chatsetterGreen: #046c38;
+$chatsetterGreen: #503de0;
 $chatsetterWhite: #ffffff;
 $chatsetterLightBg: #f7f7f7;
 $chatsetterBorder: lighten($chatsetterGreen, 40%);

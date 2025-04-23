@@ -1,194 +1,198 @@
 <template>
-  <div class="container identity-page flex flex-col">
-    <section class="page-header">
-      <h2 class="page-title">Memory</h2>
-      <p class="page-subtitle">Create your AI personality.</p>
-      <span class="tabs flex items-center gap-4">
-        <p class="page-tab" :class="{'page-tab-selected': openTab == 'general'}" @click="setTab('general')">
-          Identity
-        </p>
-        <p class="page-tab" :class="{'page-tab-selected': openTab == 'script'}" @click="setTab('script')">
-          Script
-        </p>
-        <p class="page-tab" :class="{'page-tab-selected': openTab == 'feedback'}" @click="setTab('feedback')">
-          Instant Feedback
-        </p>
-      </span>
-    </section>
-    <hr>
-    <!-- General Tab -->
-    <section v-if="openTab == 'general'" class="page-content">
-      <h3 class="section-title">Identity</h3>
-      <p class="section-description">What your AI needs to do its job.</p>
-      <div class="flex items-center gap-2 mb-4">
-        <p class="left-right-button-text" :class="{'selected-identity-tab': identityTab == 'basic'}" @click="setIdentityTab('basic')">Basic</p>
-        <!-- <p class="left-right-button" @click="setIdentityTab('basic')"><</p> -->
-        <!-- <p class="left-right-button" @click="setIdentityTab('advanced')">></p> -->
-        <p class="left-right-button-text" :class="{'selected-identity-tab': identityTab == 'advanced'}" @click="setIdentityTab('advanced')">Advanced</p>
-      </div>
-      <!-- <h4 class="section-heading identity-heading">Persona Information</h4> -->
-      <div class="flex flex-col mw___" v-if="identityTab == 'basic'">
-        <div class="flex flex-wrap gap-4">
-          <div class="one-input flex-1">
-            <h5 class="input-heading">Name</h5>
-            <input autocomplete="off" placeholder="The name of your identity"
-                   type="text"
-                   :value="$store.state.identity.personaData['persona_name']"
-                   @change="setPersonaField('persona_name', $event)">
-          </div>
-          <div class="one-input small-input">
-            <h5 class="input-heading">Pronouns</h5>
-            <select :value="$store.state.identity.personaData['pronouns']"
-                    @change="setPersonaField('pronouns', $event)">
-              <option>he/him</option>
-              <option>she/her</option>
-            </select>
-          </div>
-        </div>
-        <div class="one-input">
-          <h5 class="input-heading">Occupation</h5>
-          <input autocomplete="off" placeholder="Enter the occupation of your AI handler"
-                 type="text"
-                 :value="$store.state.identity.personaData['persona_occupation']"
-                 @change="setPersonaField('persona_occupation', $event)">
-        </div>
-        <h4 class="section-heading identity-heading">Company Information</h4>
-        <div class="flex flex-wrap gap-4">
-          <div class="one-input flex-1">
-            <h5 class="input-heading">Company Name</h5>
-            <input autocomplete="off" placeholder="What is the name of your company?"
-                   type="text"
-                   :value="$store.state.identity.personaData['persona_company_name']"
-                   @change="setPersonaField('persona_company_name', $event)">
-          </div>
-          <div class="one-input flex-1">
-            <h5 class="input-heading">Company Website</h5>
-            <input autocomplete="off" placeholder="Your company's website"
-                   type="text"
-                   :value="$store.state.identity.personaData['persona_company_website']"
-                   @change="setPersonaField('persona_company_website', $event)">
-          </div>
-        </div>
-        <div class="flex flex-wrap gap-4">
-          <div class="one-input flex-1">
-            <h5 class="input-heading">Company Email</h5>
-            <input autocomplete="off" placeholder="The email of your company"
-                   type="text"
-                   :value="$store.state.identity.personaData['persona_company_email']"
-                   @change="setPersonaField('persona_company_email', $event)">
-          </div>
-          <div class="one-input flex-1">
-            <h5 class="input-heading">Phone Number</h5>
-            <input autocomplete="off" placeholder="The company's phone number"
-                   type="tel"
-                   :value="$store.state.identity.personaData['persona_company_phone']"
-                   @change="setPersonaField('persona_company_phone', $event)">
-          </div>
-        </div>
-        <div class="one-input">
-          <h5 class="input-heading">Description</h5>
-          <input autocomplete="off" placeholder="Tell us about your company"
-                 type="text"
-                 :value="$store.state.identity.personaData['persona_company_description']"
-                 @change="setPersonaField('persona_company_description', $event)">
-        </div>
-      </div>
-      <div class="flex flex-col mw___" v-if="identityTab == 'advanced'">
-        <div class="flex flex-wrap gap-4">
-          <div class="one-input flex-1">
-            <h5 class="input-heading">Age</h5>
-            <input autocomplete="off" placeholder="The age of your identity"
-                   type="number"
-                   :value="$store.state.identity.personaData['persona_age']"
-                   @change="setPersonaField('persona_age', $event)">
-          </div>
-          <div class="one-input flex-1">
-            <h5 class="input-heading">Nationality</h5>
-            <select class="w-full" @change="setPersonaField('nationality', $event)">
-              <option>American</option>
-              <option>Canadian</option>
-            </select>
-          </div>
-          <div class="one-input flex-1">
-            <h5 class="input-heading">Race</h5>
-            <input autocomplete="off" placeholder="The race of your identity"
-                   type="text"
-                   :value="$store.state.identity.personaData['persona_race']"
-                   @change="setPersonaField('persona_race', $event)">
-          </div>
-        </div>
-        <div class="one-input">
-          <h5 class="input-heading">Languages</h5>
-          <input autocomplete="off" placeholder="What languages does your AI speak?"
-                 type="text"
-                 :value="$store.state.identity.personaData['persona_languages']"
-                 @change="setPersonaField('persona_languages', $event)">
-        </div>
-        <div class="one-input">
-          <h5 class="input-heading">Topics of Expertise</h5>
-          <input autocomplete="off" placeholder="What topics does your AI know a lot about?"
-                 type="text"
-                 :value="$store.state.identity.personaData['persona_expertise']"
-                 @change="setPersonaField('persona_expertise', $event)">
-          <p class="small-text">This tells the AI to be aware of specific expert knowledge.</p>
-        </div>
-        <div class="one-input">
-          <h5 class="input-heading">Interests</h5>
-          <input autocomplete="off" placeholder="Tell us about your identity's interests"
-                 type="text"
-                 :value="$store.state.identity.personaData['persona_interests']"
-                 @change="setPersonaField('persona_interests', $event)">
-          <p class="small-text">Indicates what your persona is passionate about.</p>
-        </div>
-        <div class="one-input">
-          <h5 class="input-heading">Background</h5>
-          <textarea :value="$store.state.identity.personaData['persona_background']"
-                    @change="setPersonaField('persona_background', $event)"
-                    class="styled-textarea identity-textarea"
-                    placeholder=""></textarea>
-          <p class="small-text">Provide information about your persona's background.</p>
-        </div>
-        <div class="one-input">
-          <h5 class="input-heading">Personal Knowledge</h5>
-          <textarea :value="$store.state.identity.personaData['persona_knowledge']"
-                    @change="setPersonaField('persona_knowledge', $event)"
-                    class="styled-textarea identity-textarea"
-                    placeholder=""></textarea>
-          <p class="small-text">Provide information that your AI should always keep in mind.</p>
-        </div>
-      </div>
+  <div class="identity-page container mx-auto p-6 bg-chatsetterLightBg rounded-lg">
+    <!-- Header -->
+    <section class="page-header text-center mb-8">
+      <h2 class="text-3xl font-semibold text-chatsetterGreen">Memory</h2>
+      <p class="text-lg text-gray-700 mt-2">Create your AI personality.</p>
     </section>
 
-    <!-- Script Tab -->
-    <section v-if="openTab == 'script'" class="page-content">
-      <div class="script-container">
-        <h3 class="section-title">Script</h3>
-        <p class="section-description">This is the script that ChatSetter should follow.</p>
-        <h4 class="section-heading identity-heading">
-          ChatSetter will follow this script, but will be creative when handling conversations
-        </h4>
-        <textarea placeholder="Paste your script here"
-                  class="styled-textarea"
-                  :value="$store.state.identity.memory.script"
-                  @change="updateScript($event)"></textarea>
-        <h3 class="section-title mt-10">Objections</h3>
-        <p class="section-description">Common objections that occur during the sale process</p>
-        <h4 class="section-heading identity-heading">
-          Add known objections and suggested responses
-        </h4>
-        <textarea placeholder="Write the list of objections and responses here"
-                  class="styled-textarea"
-                  :value="$store.state.identity.memory.objections"
-                  @change="updateObjections($event)"></textarea>
-      </div>
-    </section>
+    <!-- Tabs -->
+    <nav class="tabs flex justify-center gap-8 mb-8">
+      <button
+        class="tab-btn"
+        :class="{ 'active': openTab === 'general' }"
+        @click="setTab('general')"
+      >Identity</button>
+      <button
+        class="tab-btn"
+        :class="{ 'active': openTab === 'script' }"
+        @click="setTab('script')"
+      >Script</button>
+      <button
+        class="tab-btn"
+        :class="{ 'active': openTab === 'feedback' }"
+        @click="setTab('feedback')"
+      >Instant Feedback</button>
+    </nav>
 
-    <!-- Advanced Tab -->
-    <section v-else-if="openTab == 'feedback'" class="page-content">
-      <!-- <h3 class="section-title">Feedback</h3> -->
-      <!-- <p class="section-description">Give your Chatsetter feedback to improve performance immediately.</p> -->
-      <Revisions/>
-    </section>
+    <!-- Content -->
+    <transition name="fade" mode="out-in">
+      <!-- Identity Tab -->
+      <div v-if="openTab === 'general'" key="general" class="space-y-6">
+        <div class="card">
+          <h3 class="section-title">Identity</h3>
+          <p class="section-description">What your AI needs to do its job.</p>
+
+          <!-- Basic / Advanced Toggle -->
+          <div class="toggle-buttons inline-flex border border-gray-300 rounded-full overflow-hidden mb-6">
+            <button
+              class="px-4 py-1 font-medium"
+              :class="{ 'bg-chatsetterGreen text-white': identityTab === 'basic' }"
+              @click="setIdentityTab('basic')">
+              Basic
+            </button>
+            <button
+              class="px-4 py-1 font-medium"
+              :class="{ 'bg-chatsetterGreen text-white': identityTab === 'advanced' }"
+              @click="setIdentityTab('advanced')">
+              Advanced
+            </button>
+          </div>
+
+          <!-- Basic Fields -->
+          <div v-if="identityTab === 'basic'" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="input-heading">Name</label>
+              <input class="input-field" placeholder="The name of your identity"
+                     :value="$store.state.identity.personaData['persona_name']"
+                     @input="setPersonaField('persona_name', $event)" />
+            </div>
+            <div>
+              <label class="input-heading">Pronouns</label>
+              <select class="input-field" :value="$store.state.identity.personaData['pronouns']"
+                      @change="setPersonaField('pronouns', $event)">
+                <option>he/him</option>
+                <option>she/her</option>
+              </select>
+            </div>
+            <div class="md:col-span-2">
+              <label class="input-heading">Occupation</label>
+              <input class="input-field" placeholder="Enter the occupation of your AI handler"
+                     :value="$store.state.identity.personaData['persona_occupation']"
+                     @input="setPersonaField('persona_occupation', $event)" />
+            </div>
+            <div class="md:col-span-2">
+              <h4 class="section-subheading mt-4">Company Information</h4>
+            </div>
+            <div>
+              <label class="input-heading">Company Name</label>
+              <input class="input-field" placeholder="What is the name of your company?"
+                     :value="$store.state.identity.personaData['persona_company_name']"
+                     @input="setPersonaField('persona_company_name', $event)" />
+            </div>
+            <div>
+              <label class="input-heading">Company Website</label>
+              <input class="input-field" placeholder="Your company's website"
+                     :value="$store.state.identity.personaData['persona_company_website']"
+                     @input="setPersonaField('persona_company_website', $event)" />
+            </div>
+            <div>
+              <label class="input-heading">Company Email</label>
+              <input class="input-field" placeholder="The email of your company"
+                     :value="$store.state.identity.personaData['persona_company_email']"
+                     @input="setPersonaField('persona_company_email', $event)" />
+            </div>
+            <div>
+              <label class="input-heading">Phone Number</label>
+              <input class="input-field" type="tel" placeholder="The company's phone number"
+                     :value="$store.state.identity.personaData['persona_company_phone']"
+                     @input="setPersonaField('persona_company_phone', $event)" />
+            </div>
+            <div class="md:col-span-2">
+              <label class="input-heading">Description</label>
+              <textarea class="input-field h-32 resize-y" placeholder="Tell us about your company"
+                        :value="$store.state.identity.personaData['persona_company_description']"
+                        @input="setPersonaField('persona_company_description', $event)"></textarea>
+            </div>
+          </div>
+
+          <!-- Advanced Fields -->
+          <div v-if="identityTab === 'advanced'" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label class="input-heading">Age</label>
+                <input class="input-field" type="number" placeholder="The age of your identity"
+                       :value="$store.state.identity.personaData['persona_age']"
+                       @input="setPersonaField('persona_age', $event)" />
+              </div>
+              <div>
+                <label class="input-heading">Nationality</label>
+                <select class="input-field"
+                        @change="setPersonaField('nationality', $event)">
+                  <option>American</option>
+                  <option>Canadian</option>
+                </select>
+              </div>
+              <div>
+                <label class="input-heading">Race</label>
+                <input class="input-field" placeholder="The race of your identity"
+                       :value="$store.state.identity.personaData['persona_race']"
+                       @input="setPersonaField('persona_race', $event)" />
+              </div>
+            </div>
+            <div>
+              <label class="input-heading">Languages</label>
+              <input class="input-field" placeholder="What languages does your AI speak?"
+                     :value="$store.state.identity.personaData['persona_languages']"
+                     @input="setPersonaField('persona_languages', $event)" />
+            </div>
+            <div>
+              <label class="input-heading">Topics of Expertise</label>
+              <input class="input-field" placeholder="What topics does your AI know a lot about?"
+                     :value="$store.state.identity.personaData['persona_expertise']"
+                     @input="setPersonaField('persona_expertise', $event)" />
+              <p class="small-text mt-1">This tells the AI to be aware of specific expert knowledge.</p>
+            </div>
+            <div>
+              <label class="input-heading">Interests</label>
+              <input class="input-field" placeholder="Tell us about your identity's interests"
+                     :value="$store.state.identity.personaData['persona_interests']"
+                     @input="setPersonaField('persona_interests', $event)" />
+              <p class="small-text mt-1">Indicates what your persona is passionate about.</p>
+            </div>
+            <div>
+              <label class="input-heading">Background</label>
+              <textarea class="input-field h-32 resize-y" placeholder=""
+                        :value="$store.state.identity.personaData['persona_background']"
+                        @input="setPersonaField('persona_background', $event)"></textarea>
+              <p class="small-text mt-1">Provide information about your persona's background.</p>
+            </div>
+            <div>
+              <label class="input-heading">Personal Knowledge</label>
+              <textarea class="input-field h-32 resize-y" placeholder=""
+                        :value="$store.state.identity.personaData['persona_knowledge']"
+                        @input="setPersonaField('persona_knowledge', $event)"></textarea>
+              <p class="small-text mt-1">Provide information that your AI should always keep in mind.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Script Tab -->
+      <div v-else-if="openTab === 'script'" key="script" class="space-y-6">
+        <div class="card">
+          <h3 class="section-title">Script</h3>
+          <p class="section-description">This is the script that ChatSetter should follow.</p>
+          <textarea class="input-field h-48 resize-y"
+                    placeholder="Paste your script here"
+                    :value="$store.state.identity.memory.script"
+                    @input="updateScript($event)"></textarea>
+        </div>
+        <div class="card">
+          <h3 class="section-title">Objections</h3>
+          <p class="section-description">Common objections that occur during the sale process</p>
+          <textarea class="input-field h-32 resize-y"
+                    placeholder="Write the list of objections and responses here"
+                    :value="$store.state.identity.memory.objections"
+                    @input="updateObjections($event)"></textarea>
+        </div>
+      </div>
+
+      <!-- Feedback Tab -->
+      <div v-else key="feedback" class="page-content">
+        <Revisions/>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -203,26 +207,16 @@ export default {
     }
   },
   watch: {
-    $route (to, from){
-        this.getMyMemory()
+    '$route'(to, from) {
+      this.getMyMemory();
     }
   },
   methods: {
-    updateScript(event) {
-      const newValue = event.target.value;
-      console.log('new value', newValue);
-      this.$store.dispatch('identity/updateScript', { newValue });
-    },
-    updateObjections(event) {
-      const newValue = event.target.value;
-      console.log('new value', newValue);
-      this.$store.dispatch('identity/updateObjections', { newValue });
-    },
     setTab(tab) {
       this.openTab = tab;
     },
-    setIdentityTab(identityTab) {
-      this.identityTab = identityTab;
+    setIdentityTab(tab) {
+      this.identityTab = tab;
     },
     setPersonaField(field, event) {
       this.$store.dispatch('identity/setPersonaField', {
@@ -230,94 +224,83 @@ export default {
         value: event.target.value
       });
     },
-    getMyMemory () {
-      this.$store.dispatch('identity/getMemory', {
-          // conversationId: this.$store.state.messages.conversations[this.showConversation].id,
-          // message: this.newMessage,
-          // receiver_instagram_id: this.otherUid()
-      }).then((res) => {
-          // this.tempMessage = false
-          // this.$forceUpdate()
-      })
-      let tab = this.$route.query.tab
-      let identityTab = this.$route.query.idtab
-
-      if (tab) {
-        this.openTab = tab
-      }
-
-      if (identityTab == 'basic') {
-        this.identityTab = 'basic'
-      } else if (identityTab == 'advanced') {
-        this.identityTab = 'advanced'
-      }
+    updateScript(e) {
+      this.$store.dispatch('identity/updateScript', { newValue: e.target.value });
+    },
+    updateObjections(e) {
+      this.$store.dispatch('identity/updateObjections', { newValue: e.target.value });
+    },
+    getMyMemory() {
+      this.$store.dispatch('identity/getMemory');
+      const { tab, idtab } = this.$route.query;
+      if (tab) this.openTab = tab;
+      if (idtab) this.identityTab = idtab;
     }
   },
   created() {
     this.$store.dispatch('identity/getIdentity');
-    // this.getMyMemory()
   },
   mounted() {
-    this.getMyMemory()
+    this.getMyMemory();
   }
 }
 </script>
 
 <style lang="scss">
 /* Brand Colors */
-$chatsetterGreen: #046c38;
-$chatsetterWhite: #ffffff;
+$chatsetterGreen: #503de0;
 $chatsetterLightBg: #fcfbf7;
-$chatsetterBorder: lighten($chatsetterGreen, 40%);
 $chatsetterText: #333;
 
-/* Container & Page Layout */
-.container.identity-page {
+/* Container */
+.container {
   background-color: $chatsetterLightBg;
-  padding: 2rem;
-  font-family: sans-serif;
 }
 
-/* Page Header */
-.page-header {
-  padding-bottom: 1rem;
-}
-.page-title {
-  font-size: 1.5rem;      // Matches text-2xl
-  line-height: 1.75rem;    // Matches leading-7
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: $chatsetterGreen;
-}
-.page-subtitle {
-  font-size: 1rem;
-  color: darken($chatsetterGreen, 20%);
-  margin-bottom: 1rem;
+/* Utility */
+.text-chatsetterGreen { color: $chatsetterGreen; }
+.bg-chatsetterLightBg { background-color: $chatsetterLightBg; }
+
+/* Card */
+.card {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 /* Tabs */
-.tabs {
-  margin-top: 0.5rem;
-}
-.page-tab {
-  border-bottom: 4px solid transparent;
-  color: darken($chatsetterGreen, 20%);
+.tab-btn {
+  font-size: 1rem;
+  font-weight: 500;
   padding: 0.5rem 1rem;
-  cursor: pointer;
-  transition: color 0.2s, border-color 0.2s;
+  border-bottom: 2px solid transparent;
+  color: darken($chatsetterGreen, 15%);
+  transition: all 0.2s;
+  background: transparent;
 }
-.page-tab-selected {
+.tab-btn.active {
   color: $chatsetterGreen;
-  border-bottom: 4px solid $chatsetterGreen;
+  border-bottom-color: $chatsetterGreen;
 }
 
-/* Section Layout */
-.page-content {
-  padding: 2rem 0;
+/* Input Fields */
+.input-field {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: border-color 0.2s;
 }
+.input-field:focus {
+  outline: none;
+  border-color: $chatsetterGreen;
+}
+
+/* Headings */
 .section-title {
-  font-size: 1.25rem;     // Slightly smaller than page title for section headings
-  line-height: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
   color: $chatsetterGreen;
@@ -327,108 +310,37 @@ $chatsetterText: #333;
   color: $chatsetterText;
   margin-bottom: 1rem;
 }
-.section-heading {
-  font-size: 0.875rem;
-  font-weight: 500;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
-  color: #8d96a7;
-}
-
-/* One-Input Block Styling */
-.one-input {
-  margin-bottom: 1rem;
-}
-.one-input input,
-.one-input select,
-.one-input textarea {
-  width: 100%;
-  padding: 0.75rem;
-  /*border: 1px solid $chatsetterBorder;*/
-  border-radius: 0.375rem;
-  font-size: 1rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.one-input input:focus,
-.one-input select:focus,
-.one-input textarea:focus {
-  outline: none;
-  border: 2px solid $chatsetterGreen;
-  /*box-shadow: 0 0 0 2px rgba($chatsetterGreen, 0.2);*/
-}
-
-select, input, textarea {
-  background-color: transparent;
-}
-
-/* Input & Select Headings */
 .input-heading {
   font-size: 0.875rem;
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
+  display: block;
   color: $chatsetterText;
 }
-
-/* Styled Textarea for Script/Objections & Advanced Fields */
-.styled-textarea {
-  width: 100%;
-  max-width: 1000px;
-  height: 400px; /* You can adjust this height as needed */
-  padding: 0.75rem;
-  /*border: 1px solid $chatsetterBorder;*/
-  border-radius: 0.375rem;
-  resize: vertical;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  margin-top: 0.5rem;
+.section-subheading {
+  font-size: 1rem;
+  font-weight: 500;
+  color: darken($chatsetterText, 20%);
 }
-.styled-textarea:focus {
-  outline: none;
-  border-color: $chatsetterGreen;
-  box-shadow: 0 0 0 2px rgba($chatsetterGreen, 0.2);
-}
-
-/* Additional small text style */
 .small-text {
   font-size: 0.75rem;
-  color: $chatsetterText;
-  margin-top: 0.25rem;
+  color: darken($chatsetterText, 30%);
 }
 
-/* Specific adjustments for textareas within identity sections */
-.identity-textarea {
-  height: 150px;
+/* Toggle Buttons */
+.toggle-buttons button {
+  border: none;
+  outline: none;
 }
 
-/* Small Input Adjustments */
-.small-input {
-  max-width: 200px;
+/* Fade Transition */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s ease;
 }
-.left-right-button {
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
-  border: 1px solid #333;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: 500;
-  cursor: pointer;
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
 }
-.left-right-button-text {
-  font-size: 14px;
-  cursor: pointer;
-  padding: 8px;
-  /*border: 1px solid transparent;*/
-}
-.selected-identity-tab {
-  font-weight: 500;
-  color: $chatsetterGreen;
-  background-color: rgba($chatsetterGreen, 0.2);
-  /*border: 1px solid $chatsetterGreen;*/
-  padding: 8px;
-  border-radius: 8px;
-}
-.mw___ {
-  max-width: 1000px;
+.bg-chatsetterGreen {
+  background-color: $chatsetterGreen;
 }
 </style>

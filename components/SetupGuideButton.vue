@@ -46,7 +46,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$chatsetterGreen: #046c38;
+$chatsetterGreen: #503de0;
 
 @keyframes slide-in {
   from { transform: translateX(100%); opacity: 0; }

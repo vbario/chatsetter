@@ -32,6 +32,6 @@ export default {
 
 <style lang="scss">
 .color-text {
-  color: #046c38 !important;
+  color: #503de0 !important;
 }
 </style>

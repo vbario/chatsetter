@@ -249,7 +249,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$chatsetterGreen: #046c38;
+$chatsetterGreen: #503de0;
 .setup-guide-card {
   background: #ffffff;
   border-radius: 0.5rem;

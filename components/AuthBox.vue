@@ -61,7 +61,7 @@ export default {
 @import url("~/assets/styles/elements/_buttons.scss");
 
 /* Define custom variables based on the ChatSetter logo style */
-$chatsetter-green: #046c38;      // Primary brand green (adjust as needed)
+$chatsetter-green: #503de0;      // Primary brand green (adjust as needed)
 $chatsetter-light-bg: #fcfbf7;     // Light background color, matching ChatSetter style
 $chatsetter-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
 

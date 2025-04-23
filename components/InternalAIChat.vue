@@ -95,7 +95,7 @@ export default {
 }
 .ai-chat-top {
     /*background-color: #4ad38e;*/
-    background-color: #4ad38e;
+    background-color: #9187e5;
 }
 .ai-chat-top-icon {
     width: 22px;

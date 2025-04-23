@@ -8,6 +8,7 @@
           src="~/assets/images/chatsetter-logo-2.png"
         />
       </NuxtLink>
+      <h2 class="landing-tagline">Never miss a lead again.</h2>
       <!-- Desktop Footer -->
       <Footer class="over1024" />
     </div>
@@ -56,7 +57,7 @@ export default {
 /* ------------------ */
 /* BRAND COLOR SETUP  */
 /* ------------------ */
-$chatsetterGreen: #046c38;   // Adjust to match the specific green in your logo
+$chatsetterGreen: #503de0;   // Adjust to match the specific green in your logo
 $chatsetterWhite: #ffffff;
 
 /* ------------------ */
@@ -134,5 +135,8 @@ $chatsetterWhite: #ffffff;
 .landing-link {
   color: #fff;
   font-weight: 600;
+}
+.landing-tagline {
+  font-size: 24px;
 }
 </style>

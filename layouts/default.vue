@@ -6,6 +6,6 @@
 </template>
 <style type="text/scss">
     .bgc {
-        background-color: #fcfbf7;
+        background-color: #fafafe;
     }
 </style>

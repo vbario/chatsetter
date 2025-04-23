@@ -156,7 +156,7 @@ export default {
 <style scoped>
 /* Brand Variables */
 :root {
-  --chatsetter-green: #046c38;
+  --chatsetter-green: #503de0;
   --chatsetter-light-bg: #f7f7f7;
   --chatsetter-white: #ffffff;
   --chatsetter-text: #333;

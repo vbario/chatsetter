@@ -54,7 +54,7 @@ p {
 }
 
 /* Brand variables */
-$chatsetter-green: #046c38;          // Primary ChatSetter green (adjust as needed)
+$chatsetter-green: #503de0;          // Primary ChatSetter green (adjust as needed)
 $chatsetter-green-dark: darken($chatsetter-green, 10%);
 $chatsetter-light-bg: #f7f7f7;         // Light background color for the form
 $chatsetter-white: #ffffff;
@@ -79,7 +79,7 @@ $chatsetter-border: lighten($chatsetter-green, 40%);
 /* Subtitle styling */
 .subtitle {
   margin-bottom: 0.75rem;   // Corresponds to mb-3
-  color: darken($chatsetter-green, 20%);
+  /*color: darken($chatsetter-green, 20%);*/
   text-align: left;
 }
 

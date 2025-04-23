@@ -126,7 +126,7 @@ export default {
 
 <style lang="scss">
 /* Define brand colors and related variables */
-$chatsetter-green: #046c38;
+$chatsetter-green: #503de0;
 $chatsetter-white: #ffffff;
 
 /* Overall navbar container */

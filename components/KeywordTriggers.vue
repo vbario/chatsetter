@@ -77,7 +77,7 @@ export default {
 </script>
 
 <style lang="scss">
-$chatsetter-green: #046c38;
+$chatsetter-green: #503de0;
 $chatsetter-white: #ffffff;
 /* Dropdowns used within the navbar */
 .nav-section-title_ {

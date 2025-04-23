@@ -20,7 +20,7 @@ export default {
 </script>
 
 <style lang="scss">
-$chatsetterGreen: #046c38;
+$chatsetterGreen: #503de0;
 .how-to-accept {
     width: 100%;
     max-width: 600px;
