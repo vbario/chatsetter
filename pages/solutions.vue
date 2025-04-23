@@ -1,5 +1,12 @@
 <template>
   <div class="solutions-page">
+    <!-- Logo -->
+    <div class="logo-container">
+      <NuxtLink to="/">
+        <img src="~/assets/images/chatsetter-logo-2.png" alt="ChatSetter Logo" class="logo">
+      </NuxtLink>
+    </div>
+    
     <!-- Hero Section -->
     <section class="hero_ text-white py-20 text-center">
       <h1 class="text-5xl font-bold mb-4 mt-3">Powerful Chat Automation for Every Influencer</h1>
@@ -81,5 +88,17 @@
 
 .text-white {
     color: #fff;
+}
+
+.logo-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+}
+
+.logo {
+    height: 80px;
+    cursor: pointer;
 }
 </style>

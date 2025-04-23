@@ -1,5 +1,12 @@
 <template>
   <div class="pricing-page">
+    <!-- Logo -->
+    <div class="logo-container">
+      <NuxtLink to="/">
+        <img src="~/assets/images/chatsetter-logo-2.png" alt="ChatSetter Logo" class="logo">
+      </NuxtLink>
+    </div>
+    
     <!-- Hero Section -->
     <section class="hero">
       <h1 class="hero-title">Pricing</h1>
@@ -296,6 +303,19 @@ export default {
   font-size: 1.125rem;
   padding: 1rem 2rem;
   box-shadow: 0 4px 8px rgba(4,108,56,0.2);
+}
+
+/* Logo styling */
+.logo-container {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+}
+
+.logo {
+  height: 80px;
+  cursor: pointer;
 }
 
 .plan-cta:hover {
