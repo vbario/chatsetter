@@ -17,7 +17,7 @@
       >
         <!-- Section header -->
         <div class="section-header" @click="toggleSection(index)">
-          <span>{{ section.title }}</span>
+          <span :class="{ 'section-completed': isSectionCompleted(section) }">{{ section.title }}</span>
           <span>{{ section.open ? '▾' : '▸' }}</span>
         </div>
 
@@ -123,6 +123,13 @@ export default {
     }
   },
   methods: {
+    isSectionCompleted(section) {
+      // Check if all items in the section are completed
+      if (section) {
+        return section.items.length > 0 && section.items.every(item => item.completed);
+      }
+      return false
+    },
     handleClick (item, index, idx) {
       if (item.autoCheck) {
         this.handleCheck(item, index, idx)
@@ -162,10 +169,11 @@ export default {
     },
     onItemClick(section, item) {
       // TODO: emit event or navigate
-      console.log(`Clicked on ${section.title} → ${item.label}`)
+      // console.log(`Clicked on ${section.title} → ${item.label}`)
     },
     getMySetupGuide () {
       this.$store.dispatch('identity/getMySetupGuide', {}).then((sections) => {
+        console.log('sections ==>', sections)
         if (sections) {
           this.sections = sections
         }
@@ -279,6 +287,11 @@ $chatsetterGreen: #046c38;
   padding: 0.5rem 0;
   font-weight: 500;
   /* removed underline */
+}
+
+.section-completed {
+  text-decoration: line-through;
+  /*color: #10b981;*/
 }
 .section-items {
   list-style: none;
