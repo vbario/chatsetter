@@ -80,7 +80,7 @@ export default {
             { label: 'Review your objective', completed: false, link: '/actions', check: true, autoCheck: true },
             { label: 'Enable followup messages (recommended)', completed: false, link: '/actions?followup=true', check: true, autoCheck: true },
             { label: 'Enable comment replies (recommended)', completed: false, link: '/actions?commentreplies=true', check: true, autoCheck: true },
-            { label: 'Turn on ChatSetter', completed: false, link: '/actions?turnon=true' }
+            { label: 'Turn on ChatSetter', completed: false, link: '/actions?turnon=true', autoCheck: true }
           ],
         },
         {
