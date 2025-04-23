@@ -18,8 +18,8 @@
             <!-- <InternalAIChat v-if="$store.state.ui.showAIPlayground"/> -->
         </div>
     </div>
-    <SetupGuide @closeGuide="closeSetupGuide()" v-show="setupGuideOpen"/>
-    <SetupGuideButton @openGuide="openSetupGuide()" v-show="!setupGuideOpen"/>
+    <SetupGuide @closeGuide="closeSetupGuide()" v-show="setupGuideOpen && !$store.state.identity.hideSetupGuide"/>
+    <SetupGuideButton @openGuide="openSetupGuide()" v-show="!setupGuideOpen && !$store.state.identity.hideSetupGuide"/>
   </div>
 </template>
 

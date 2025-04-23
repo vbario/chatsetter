@@ -6,7 +6,8 @@ export const state = () => ({
   sequences: {},
   memory: {},
   style: [],
-  sequencesLoaded: false
+  sequencesLoaded: false,
+  hideSetupGuide: false
 })
 
 export const getters = {
@@ -33,6 +34,10 @@ export const mutations = {
   setStyle(state, data) {
     console.log('setStyle', data)
     state.style = data
+  },
+  hideSetupGuide(state, hideSetupGuide) {
+    console.log('hideSetupGuide', hideSetupGuide)
+    state.hideSetupGuide = hideSetupGuide
   },
   setSequences(state, data) {
     console.log('sequences', data)
@@ -190,6 +195,9 @@ export const actions = {
       await this.$fire.database.ref(path).set(value)
       return resolve('ok')
     })
+  },
+  async hideSetupGuide({ state }, item) {
+    this.commit('identity/hideSetupGuide', true)
   },
   async getConversation({ state }, item) {
     let user = this.$fire.auth.currentUser.uid

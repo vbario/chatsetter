@@ -53,7 +53,7 @@ export default {
           open: true,
           items: [
             { label: 'Accept invite on Instagram', completed: false, link: '/instagraminvite', check: true },
-            { label: 'Authorize Instagram to use ChatSetter', completed: false, link: '/settings' }
+            { label: 'Authorize Instagram to use ChatSetter', completed: false, link: '/settings', check: true }
           ],
         },
         {
@@ -112,6 +112,14 @@ export default {
         this.$forceUpdate();
       },
       deep: true
+    },
+    'progress': {
+      handler(newVale) {
+        console.log('progress', this.progress)
+        if (this.progress == 100) {
+          this.$store.dispatch('identity/hideSetupGuide', {})
+        }
+      }
     }
   },
   methods: {
@@ -129,10 +137,11 @@ export default {
       // Check if this is the "Turn on ChatSetter" item (Actions section, item index 3)
       if (index === 3 && idx === 3) {
         // Turn on ChatSetter
+        this.sections[index].items[idx].completed = true
+        this.saveSetupGuide()
         if (!(this.$store.state.identity.sequences[0] && this.$store.state.identity.sequences[0].active)) {
           this.$store.dispatch('identity/toggleSequenceActive', { sequence: 0 }).then(() => {
             // Mark the checkbox as completed
-            this.sections[index].items[idx].completed = true
             this.saveSetupGuide()
           })
         }
@@ -166,7 +175,6 @@ export default {
       this.$store.dispatch('identity/saveSetupGuide', {sections: this.sections})
     },
     updateCompletionStatuses () {
-
       let loaded = this.$store.state.auth.loaded
       let uid = this.$fire.auth.currentUser && this.$fire.auth.currentUser.uid
       let loadedB = this.$store.state.auth && this.$store.state.identity.personaData.loaded
@@ -193,7 +201,6 @@ export default {
             (this.$store.state.identity.sequencesLoaded && this.$store.state.identity.sequences[0] && this.$store.state.identity.sequences[0].active) ? true : false
           ]
         ]
-        console.log('completionStatuses', completionStatuses)
         for (let i in completionStatuses) {
           let category = completionStatuses[i]
           for (let j in category) {
@@ -203,6 +210,7 @@ export default {
             }
           }
         }
+        this.$forceUpdate()
       } else if (loaded) {
         //
       } else {
