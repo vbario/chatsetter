@@ -80,7 +80,7 @@ export default {
             { label: 'Review your objective', completed: false, link: '/actions', check: true, autoCheck: true },
             { label: 'Enable followup messages (recommended)', completed: false, link: '/actions?followup=true', check: true, autoCheck: true },
             { label: 'Enable comment replies (recommended)', completed: false, link: '/actions?commentreplies=true', check: true, autoCheck: true },
-            { label: 'Turn on ChatSetter', completed: false, link: '/actions?turnon=true', autoCheck: true }
+            { label: 'Turn on ChatSetter', completed: false, link: '/actions?turnon=true', check: true, autoCheck: true }
           ],
         },
         {
@@ -125,7 +125,18 @@ export default {
     },
     handleCheck (item, index, idx) {
       console.log('handleCheck', item, index, idx)
-      if (item.check) {
+      
+      // Check if this is the "Turn on ChatSetter" item (Actions section, item index 3)
+      if (index === 3 && idx === 3) {
+        // Turn on ChatSetter
+        if (!(this.$store.state.identity.sequences[0] && this.$store.state.identity.sequences[0].active)) {
+          this.$store.dispatch('identity/toggleSequenceActive', { sequence: 0 }).then(() => {
+            // Mark the checkbox as completed
+            this.sections[index].items[idx].completed = true
+            this.saveSetupGuide()
+          })
+        }
+      } else if (item.check) {
         this.sections[index].items[idx].completed = true
         this.saveSetupGuide()
       }
