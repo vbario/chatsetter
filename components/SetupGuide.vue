@@ -87,8 +87,8 @@ export default {
           title: 'Try it!',
           open: false,
           items: [
-            { label: 'Try a test chat as a customer', completed: false, link: '/tryit' },
-            { label: 'Try a live chat on Instagram', completed: false }
+            { label: 'Try a test chat as a customer', completed: false, link: '/tryit', check: true, autoCheck: true },
+            { label: 'Try a live chat on Instagram', completed: false, check: true, autoCheck: true }
           ],
         }
       ]
