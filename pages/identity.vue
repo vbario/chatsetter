@@ -254,7 +254,7 @@ $chatsetterText: #333;
 
 /* Container */
 .container {
-  background-color: $chatsetterLightBg;
+  background-color: #fafafe;
 }
 
 /* Utility */
