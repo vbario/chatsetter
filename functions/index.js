@@ -529,28 +529,38 @@ let runMessageQueue = async () => {
             if (secondsSinceSent > 85) {
               let message_queue_ref__ = `/message_queue/${uid || 'f'}/${receiver || 'g'}`
               console.log('Sending message for this url entry:', message_queue_ref__)
-              if (followUpUser.fromComment) {
-                let {
-                  comment_id,
-                  sender_allen_uid,
-                  sender_converstion_id,
-                  receiver_instagram_id,
-                  sender_instagram_username
-                } = followUpUser.fromComment
-                await sendCommentResponse({
-                  comment_id,
-                  sender_allen_uid,
-                  sender_converstion_id,
-                  receiver_instagram_id,
-                  sender_instagram_username
+
+              let _shouldBeSent = await shouldBeSent(uid, receiver)
+              if (_shouldBeSent) {
+                if (followUpUser.fromComment) {
+                  let {
+                    comment_id,
+                    sender_allen_uid,
+                    sender_converstion_id,
+                    receiver_instagram_id,
+                    sender_instagram_username
+                  } = followUpUser.fromComment
+                  await sendCommentResponse({
+                    comment_id,
+                    sender_allen_uid,
+                    sender_converstion_id,
+                    receiver_instagram_id,
+                    sender_instagram_username
+                  })
+                }
+                await sendOneMessage({uid, receiver_instagram_id: receiver})
+                await waitTime(5)
+                await db.ref(message_queue_ref__).set({
+                  time: now,
+                  count: 1
+                })
+              } else {
+                await waitTime(5)
+                await db.ref(message_queue_ref__).set({
+                  time: now,
+                  count: 4
                 })
               }
-              await sendOneMessage({uid, receiver_instagram_id: receiver})
-              await waitTime(5)
-              await db.ref(message_queue_ref__).set({
-                time: now,
-                count: 1
-              })
             }
           }
         }
@@ -596,9 +606,6 @@ let sendFollowup = async (uid, igid, count) => {
           sender_instagram_username: null,
           message: possibleResponses[count - 1][Math.floor(Math.random() * possibleResponses[count - 1].length)]
         }, false)
-    } else {
-      let message_queue_ref__ = `/message_queue/${uid || 'f'}/${igid || 'g'}`
-      await db.ref(message_queue_ref__).set(null)
     }
 
     return resolve('ok')
@@ -635,7 +642,7 @@ let runFollowupQueue = async () => {
                 count: 3
               })
             }
-          } else if (followUpUser.count == 3) {
+          } else {
             if (minutesSinceSent > 180) {
               await waitTime(100)
               await sendFollowup(uid, receiver, 3)
@@ -2492,7 +2499,7 @@ exports.igcallback = functions.https.onRequest((req, res) => {
           await checkAutoResponder(receiver_allen_id, instagram_sender_id)
           console.log('allenIds', allenIds)
           let senderUsername = await getInstagramUsernameById(receiver_allen_id, instagram_sender_id)
-          let _shouldRespondToMessage = shouldRespondToMessage({body, receiver_allen_id, senderUsername})
+          let _shouldRespondToMessage = await shouldRespondToMessage({body, receiver_allen_id, senderUsername})
           if (_shouldRespondToMessage) {
             // await sendOneMessage({uid: receiver_allen_id, receiver_instagram_id: instagram_sender_id})
             await addToMessageQueue({uid: receiver_allen_id, receiver_instagram_id: instagram_sender_id})
@@ -2508,7 +2515,7 @@ exports.igcallback = functions.https.onRequest((req, res) => {
           await checkAutoResponder(receiver_allen_id, instagram_sender_id)
           let comment_id = body.entry[0].changes[0].value.id
           let senderUsername = body.entry[0].changes[0].value.from.username
-          let _shouldRespondToComment = shouldRespondToComment({body, entryOnId, instagram_sender_id, receiver_allen_id, senderUsername})
+          let _shouldRespondToComment = await shouldRespondToComment({body, entryOnId, instagram_sender_id, receiver_allen_id, senderUsername})
           if (_shouldRespondToComment) {
             let myInstagramInfo = await getMyInstagramInfo(receiver_allen_id)
             let instagram_username = myInstagramInfo.username
