@@ -1,27 +1,246 @@
 <template>
-  <div class="container h-screen mx-auto flex _1024">
-    <div class="flex-1 flex flex-col justify-center items-center relative">
-      <!-- Navigation Logo -->
-      <NuxtLink to="/">
-        <img
-          class="chatsetter-logo cursor-pointer"
-          src="~/assets/images/chatsetter-logo-2.png"
-        />
-      </NuxtLink>
-      <h2 class="landing-tagline">Never miss a lead again.</h2>
-      <!-- Desktop Footer -->
-      <Footer class="over1024" />
-    </div>
-
-    <div class="flex flex-1 justify-center items-center color-dark-background relative">
-      <AuthBox :startingTab="startingTab" />
-      <div class="absolute top-6 right-8 my-dashboard-button">
-        <LandingHeader/>
+  <div class="flex flex-col w-full">
+    
+    <div class="container h-screen-almost mx-auto flex _1024">
+      <div class="flex-1 flex flex-col justify-center items-center relative">
+        <!-- Navigation Logo -->
+        <NuxtLink to="/">
+          <img
+            class="chatsetter-logo cursor-pointer"
+            src="~/assets/images/chatsetter-logo-2.png"
+          />
+        </NuxtLink>
+        <h2 class="landing-tagline">Never miss a lead again.</h2>
+        <!-- Desktop Footer -->
+        <!-- <Footer class="over1024" /> -->
       </div>
+
+      <div class="flex flex-1 justify-center items-center color-dark-background relative">
+        <AuthBox :startingTab="startingTab" />
+        <div class="absolute top-6 right-8 my-dashboard-button">
+          <LandingHeader/>
+        </div>
+      </div>
+
+      <!-- Mobile Footer -->
+      <!-- <Footer class="under1024" /> -->
+    </div>
+    <div class="container h-screen-min mx-auto flex flex-col _1024">
+      <!-- Above the Fold -->
+      <section class="bg-white py-24">
+        <div class="container mx-auto px-6 text-center flex flex-col items-center">
+          <h1 class="text-4xl md:text-5xl font-extrabold mb-4 mw__">
+            Your DMs Are Gold Mines—Stop Leaving Money on the Table
+          </h1>
+          <p class="text-lg md:text-xl mb-8">
+            ChatSetter auto-handles your Instagram DMs, books calls, and never lets a hot lead slip away.
+          </p>
+          <div class="space-x-4">
+            <NuxtLink class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg" to="/?register=true">
+              Start 5-Day Free Trial
+            </NuxtLink>
+            <a href="#features" class="inline-block text-purple-600 font-semibold py-3 px-6">
+              See How It Works →
+            </a>
+          </div>
+          <p class="mt-6 text-sm text-gray-500">
+            <!-- Join 3,219 creators who’ve booked 5,482 calls last month. -->
+            Join the creators who are staying ahead by turning their DMs into booked calls—effortlessly.
+          </p>
+        </div>
+      </section>
+
+      <!-- The Problem Section -->
+      <section id="problem" class="py-24">
+        <div class="container flex mx-auto px-6 md:grid-cols-2 gap-12 justify-center items-center">
+          <img src="~/assets/images/mailbox-full-b5.jpg" alt="Overflowing inbox" class="full-inbox rounded-lg shadow-lg" />
+          <div>
+            <h2 class="text-3xl font-bold mb-4">Sound familiar?</h2>
+            <ul class="space-y-3 text-lg">
+              <li>📥 You open IG and see 120 unread DMs… again.</li>
+              <li>⏱️ You lose hours juggling chats instead of coaching, creating, or selling.</li>
+              <li>💸 Every missed message is a missed sale.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Mechanisms of the False Solution -->
+      <section class="bg-gray-100 py-24">
+        <div class="container mx-auto px-6 text-center max-w-2xl">
+          <h3 class="text-2xl font-semibold mb-6">Why hiring a VA or winging it doesn’t work:</h3>
+          <div class="grid md:grid-cols-3 gap-8">
+            <div class="p-6 bg-white rounded-lg shadow">
+              <h4 class="font-bold mb-2">👩‍💼 VA Training Overhead</h4>
+              <p class="text-sm text-gray-600">Days to train, days to forget—your leads go cold.</p>
+            </div>
+            <div class="p-6 bg-white rounded-lg shadow">
+              <h4 class="font-bold mb-2">⌚ Manual Check-In</h4>
+              <p class="text-sm text-gray-600">Your nights & weekends? Ruined by DM duty.</p>
+            </div>
+            <div class="p-6 bg-white rounded-lg shadow">
+              <h4 class="font-bold mb-2">🔄 One-Size-Fits-All Bots</h4>
+              <p class="text-sm text-gray-600">Canned replies = zero rapport. Leads bail out.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Benefits -->
+      <section id="features" class="py-24">
+        <div class="container mx-auto px-6 text-center">
+          <h2 class="text-3xl font-bold mb-8">Meet the only tool that actually works</h2>
+          <div class="grid md:grid-cols-3 gap-8">
+            <div class="space-y-3">
+              <div class="text-4xl">🤖</div>
+              <h4 class="font-semibold text-xl">AI-Powered Replies</h4>
+              <p class="text-gray-600">Personalized, human-like DMs 24/7.</p>
+            </div>
+            <div class="space-y-3">
+              <div class="text-4xl">📅</div>
+              <h4 class="font-semibold text-xl">Instant Call Booking</h4>
+              <p class="text-gray-600">Your calendar fills itself—no back-and-forth.</p>
+            </div>
+            <div class="space-y-3">
+              <div class="text-4xl">🔗</div>
+              <h4 class="font-semibold text-xl">Seamless IG Integration</h4>
+              <p class="text-gray-600">Works right inside your DMs—no extra apps.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Qualification -->
+      <section class="bg-purple-600 text-white py-24">
+        <div class="container mx-auto px-6 text-center max-w-2xl">
+          <h2 class="text-3xl font-bold mb-4">Is ChatSetter for you?</h2>
+          <p class="mb-6">Perfect for coaches, consultants, creators, and small teams who:</p>
+          <ul class="space-y-2 text-lg">
+            <li>✅ Have 500+ followers</li>
+            <li>✅ Receive 20+ DMs per day</li>
+            <li>✅ Want to book more calls, not juggle inboxes</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Offer -->
+      <section class="py-24">
+        <div class="container mx-auto px-6 text-center">
+          <h2 class="text-3xl font-bold mb-4">Ready to rocket your bookings?</h2>
+          <p class="mb-8 text-lg">Start your 14-day free trial today. No credit card, cancel anytime.</p>
+          <a href="#pricing" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg">
+            Start Free Trial
+          </a>
+        </div>
+      </section>
+
+      <!-- Story -->
+      <section class="bg-white py-24">
+        <div class="container mx-auto px-6 md:flex md:items-center md:space-x-12">
+          <img src="~/assets/images/vb.jpeg" alt="Vladimir Baranov" class="rounded-full w-48 h-48 mb-6 md:mb-0 mx-auto" />
+          <div>
+            <h3 class="text-2xl font-bold mb-4">Built by creators, for creators</h3>
+            <p class="text-gray-700 mb-4">
+              I’m Vladimir Baranov, host of “Future Smash” on X and longtime robotics educator.
+              I built ChatSetter to solve my own DM overload—and it’s already booked hundreds of calls
+              for folks just like you.
+            </p>
+            <NuxtLink class="text-purple-600 font-semibold" to="/pricing">See Plans & Pricing →</NuxtLink>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pricing -->
+      <section id="pricing" class="bg-gray-100 py-24">
+        <div class="container mx-auto px-6 text-center">
+          <h2 class="text-3xl font-bold mb-8">Simple Pricing</h2>
+          <div class="grid md:grid-cols-3 gap-8">
+            <!-- Starter -->
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+              <h3 class="text-xl font-semibold mb-4">Starter</h3>
+              <p class="text-4xl font-bold mb-4">$29<span class="text-lg">/mo</span></p>
+              <ul class="space-y-2 text-gray-600 mb-6">
+                <li>100 DMs/month</li>
+                <li>Auto-booking</li>
+                <li>Email support</li>
+              </ul>
+              <a href="#" class="block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded">
+                Start Free Trial
+              </a>
+            </div>
+            <!-- Growth -->
+            <div class="bg-white p-6 rounded-lg shadow-lg border-4 border-purple-600">
+              <h3 class="text-xl font-semibold mb-4">Growth</h3>
+              <p class="text-4xl font-bold mb-4">$79<span class="text-lg">/mo</span></p>
+              <ul class="space-y-2 text-gray-600 mb-6">
+                <li>500 DMs/month</li>
+                <li>Priority booking</li>
+                <li>Chat analytics</li>
+              </ul>
+              <a href="#" class="block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded">
+                Start Free Trial
+              </a>
+            </div>
+            <!-- Pro -->
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+              <h3 class="text-xl font-semibold mb-4">Pro</h3>
+              <p class="text-4xl font-bold mb-4">$149<span class="text-lg">/mo</span></p>
+              <ul class="space-y-2 text-gray-600 mb-6">
+                <li>Unlimited DMs</li>
+                <li>Dedicated support</li>
+                <li>Custom integrations</li>
+              </ul>
+              <a href="#" class="block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded">
+                Start Free Trial
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Money-Back Guarantee -->
+      <section class="py-24">
+        <div class="container mx-auto px-6 text-center">
+          <h3 class="text-2xl font-bold mb-4">30-Day Money-Back Guarantee</h3>
+          <p class="text-gray-600">
+            Love it—or get a full refund. No hoops, no hassle.
+          </p>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="bg-white py-24">
+        <div class="container mx-auto px-6 max-w-3xl">
+          <h3 class="text-2xl font-bold mb-8 text-center">Frequently Asked Questions</h3>
+          <div class="space-y-6">
+            <div>
+              <h4 class="font-semibold">How does ChatSetter integrate with Instagram?</h4>
+              <p class="text-gray-600">We connect via your IG Business API—setup takes less than 2 minutes.</p>
+            </div>
+            <div>
+              <h4 class="font-semibold">Do I need to give you my password?</h4>
+              <p class="text-gray-600">Never. We use OAuth so you stay in full control.</p>
+            </div>
+            <div>
+              <h4 class="font-semibold">Can I pause or cancel anytime?</h4>
+              <p class="text-gray-600">Yes—no long-term contracts, cancel in a click.</p>
+            </div>
+            <div>
+              <h4 class="font-semibold">What if I outgrow my plan?</h4>
+              <p class="text-gray-600">Upgrade instantly to higher tiers with zero downtime.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="bg-gray-800 text-gray-400 py-8">
+        <div class="container mx-auto px-6 text-center text-sm">
+          © 2025 ChatSetter • <NuxtLink to="/terms">Terms</NuxtLink> • <NuxtLink to="/privacy">Privacy Policy</NuxtLink>
+        </div>
+      </footer>
     </div>
 
-    <!-- Mobile Footer -->
-    <Footer class="under1024" />
   </div>
 </template>
 
@@ -140,5 +359,18 @@ $chatsetterWhite: #ffffff;
 }
 .landing-tagline {
   font-size: 24px;
+}
+.h-screen-almost {
+  height: calc(100vh - 90px);
+}
+.h-screen-min {
+  min-height: 100vh;
+}
+.full-inbox {
+  width: 100%;
+  max-width: 500px;
+}
+.mw__ {
+  max-width: 1100px !important;
 }
 </style>

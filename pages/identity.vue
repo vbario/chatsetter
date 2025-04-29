@@ -1,5 +1,5 @@
 <template>
-  <div class="identity-page container mx-auto p-6 bg-chatsetterLightBg rounded-lg">
+  <div class="identity-page container container-indentity mx-auto p-6 bg-chatsetterLightBg rounded-lg">
     <!-- Header -->
     <section class="page-header text-center mb-8">
       <h2 class="text-3xl font-semibold text-chatsetterGreen">Memory</h2>
@@ -253,7 +253,7 @@ $chatsetterLightBg: #fcfbf7;
 $chatsetterText: #333;
 
 /* Container */
-.container {
+.container-indentity {
   background-color: #fafafe;
 }
 

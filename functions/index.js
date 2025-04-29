@@ -17,17 +17,27 @@ const firebaseService = require('./services/firebase')
 // const emailService = require('./services/email')
 const db = firebaseService.db
 
+exports.slam = functions.https.onRequest((req, res) => { // ok
+    cors(req, res, async () => {
+        let _data = req.body.data || {}
+        console.log('_data', _data)
 
+        let __data = JSON.parse(_data)
 
+        console.log('__data', __data)
 
-// http://127.0.0.1:5001/allen-ea504/us-central1/addInstagramTester
-// exports.addInstagramTester = functions.https.onRequest(async (data, context) => {
-//   puppeteerService.addInstagramTester('cup.wise')
-//     .catch(err => {
-//       console.error(err)
-//       process.exit(1)
-//     })
-// })
+        let spaceId = __data.spaceId || 'noId'
+        let data = __data.data
+        let stringData = JSON.stringify(data)
+
+        let now = (new Date()).getTime()
+
+        await db.ref('slam_data/' + spaceId).set(stringData)
+        await db.ref('slam_data_v2/' + spaceId).set(data)
+        // await db.ref('slam_data_v3/' + spaceId + '/' + now).set(data)
+        res.status(200).send({ received: true })
+    })
+})
 
 let getAccessToken = async (uid) => {
   return new Promise(async (resolve, reject) => {
@@ -1970,7 +1980,8 @@ let noRespondTo = async (receiver_allen_id, senderUsername) => {
 }
 let shouldRespondToMessage = async (data) => {
   return new Promise(async (resolve, reject) => {
-    let {body, receiver_allen_id, senderUsername} = data
+    let {body, receiver_allen_id, senderUsername, instagram_sender_id} = data
+    console.log('data', data)
     if (body.entry[0].messaging[0].read) {
       return resolve(false)
     }
@@ -1982,11 +1993,11 @@ let shouldRespondToMessage = async (data) => {
     if (noRespond) {
       return resolve(false)
     }
-    let _ghlAccounts = await db.ref('ghlAccounts').once('value')
-    let ghlAccounts = _ghlAccounts.val()
-    if (ghlAccounts.indexOf(receiver_allen_id) > -1) {
-      return resolve(false)
-    }
+    // let _ghlAccounts = await db.ref('ghlAccounts').once('value')
+    // let ghlAccounts = _ghlAccounts.val()
+    // if (ghlAccounts.indexOf(receiver_allen_id) > -1) {
+    //   return resolve(false)
+    // }
     let __shouldBeSent = await shouldBeSent(receiver_allen_id, instagram_sender_id)
     if (!__shouldBeSent) {
       return resolve(false)
@@ -2055,6 +2066,122 @@ exports.saveUsersB = functions.https.onRequest(async (req, res) => {
     let newUsernames = req.body.data
     let usernamePath = '/instagram_usernames_by_uid_b/' + (uid || 'f')
     await db.ref(usernamePath).update(newUsernames)
+    res.status(200).send('ok')
+  })
+})
+async function processConversation (data) {
+  return new Promise(async (resolve, reject) => {
+    let {model, system, messages} = data
+    try {
+      const response = await axios.post(
+        `https://api.anthropic.com/v1/messages`,
+        {
+          model,
+          max_tokens: 2048,
+          // max_tokens: 50,
+          system,
+          messages
+        },
+        {
+          headers: {
+            'x-api-key': process.env.ANTHROPIC_API_KEY,
+            'anthropic-version': '2023-06-01',
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+      return resolve(response)
+    } catch (error) {
+      return reject(error)
+    }
+  })
+}
+
+let processConversationSystemPrompt = `You are an AI assistant designed to analyze conversations and identify how likely a given contact is to require ChatSetter—a tool that automates managing direct messages (DMs), follow-ups, lead nurturing, and sales through social media (particularly Instagram). Your task is to parse provided conversation transcripts between a business/influencer and their contact, and assign a numerical score between 0 (least likely to benefit from ChatSetter) and 10 (most likely to benefit from ChatSetter).
+
+When analyzing the conversation, consider these factors:
+
+The contact's explicit need or expressed difficulty managing messages or leads.
+
+Indicators of high volume messaging that could overwhelm manual handling.
+
+The presence of missed or delayed responses from the influencer/business.
+
+Any interest or mention of automation, time-saving, or efficient management of messages.
+
+Conversations indicating potential for booking calls, selling digital products, or monetizing through DMs.
+
+Assign scores based on these criteria:
+
+0-2: Little or no indication of needing automation. Manual messaging appears sufficient.
+
+3-5: Mild indications of messaging management struggles or minor inefficiencies.
+
+6-8: Clear indications of significant messaging volume, missed opportunities, or expressed interest in solutions.
+
+9-10: Strong explicit expressions of overwhelm, frequent missed messages, high volume leads, and strong indicators of significant benefit from automated messaging solutions like ChatSetter.
+
+Output only the score and a concise justification (1-2 sentences) explaining why the score was given.
+`
+
+let _processConversationSystemPrompt = (messages) => {
+  let prompt = processConversationSystemPrompt + `
+
+  Analyze the conversation:
+    ${messages}
+  `
+
+  return prompt
+}
+
+exports.determineBestLeads = functions.https.onRequest(async (req, res) => {
+  cors(req, res, async () => {
+    console.log('determineBestLeads body', req.body)
+    let uid = 'n9JzjvJTnMh7AtHxlGT2dq585Bu2'    
+    let conversationPath = `instagram_usernames_by_uid_b/` + (uid || 'f')
+    let _oneConversation = await db.ref(conversationPath).orderByChild('completed_').limitToFirst(1).once('value')
+    let oneConversation = _oneConversation.val()
+    let oneConversationKey = Object.keys(oneConversation)[0] || 'f'
+
+    console.log('oneConversation')
+    console.log(oneConversation)
+
+    if (oneConversation[oneConversationKey].messages) {
+      let otherUsername = oneConversation[oneConversationKey].username
+      let fullConversation = (oneConversation[oneConversationKey].messages ? oneConversation[oneConversationKey].messages.data : [])
+      let messages = [
+        ...Object.keys(fullConversation).map((v, i) => {
+            return {
+              role: fullConversation[v].from.username == otherUsername ? 'assistant' : 'user',
+              content: fullConversation[v].message || '-'
+            }
+        }).reverse(),
+        {role: 'assistant', content: 'I will now rate the above conversation based on how likely you are to need ChatSetter.'}
+      ]
+      let messagesAsString = ''
+      for (let m in messages) {
+        let message = messages[m]
+        messagesAsString = messagesAsString + `
+          ${message.role}: ${message.content}
+        `
+      }
+      let data = {
+        system: _processConversationSystemPrompt(messagesAsString),
+        model: 'claude-3-7-sonnet-20250219',
+        messages
+      }
+      let response = await processConversation(data)
+      let content = response.content
+      console.log('Got response', response.data.content)
+      let scoresPath = 'scores_/' + (uid || 'f') + '/' + oneConversationKey
+      await db.ref(scoresPath).set(response.data)
+      
+      let conversationProcessedPath = conversationPath + '/' + oneConversationKey + '/completed_'
+      await db.ref(conversationProcessedPath).set(true)
+    } else {
+      let conversationProcessedPath = conversationPath + '/' + oneConversationKey + '/completed_'
+      await db.ref(conversationProcessedPath).set(true)
+    }
     res.status(200).send('ok')
   })
 })
@@ -2499,7 +2626,7 @@ exports.igcallback = functions.https.onRequest((req, res) => {
           await checkAutoResponder(receiver_allen_id, instagram_sender_id)
           console.log('allenIds', allenIds)
           let senderUsername = await getInstagramUsernameById(receiver_allen_id, instagram_sender_id)
-          let _shouldRespondToMessage = await shouldRespondToMessage({body, receiver_allen_id, senderUsername})
+          let _shouldRespondToMessage = await shouldRespondToMessage({body, receiver_allen_id, senderUsername, instagram_sender_id})
           if (_shouldRespondToMessage) {
             // await sendOneMessage({uid: receiver_allen_id, receiver_instagram_id: instagram_sender_id})
             await addToMessageQueue({uid: receiver_allen_id, receiver_instagram_id: instagram_sender_id})

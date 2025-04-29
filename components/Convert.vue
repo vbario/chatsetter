@@ -1,7 +1,7 @@
 <template>
     <div class="convert-box">
       <div v-show="changeConversionType" class="convert-options">
-        <select class="nav-dropdown" :value="$store.state.ai.conversionType" @change="setNextConversionType($event)">
+        <select class="nav-dropdown dropdown-bigger" :value="$store.state.ai.conversionType" @change="setNextConversionType($event)">
           <option value="book-sales-calls">Book sales calls in DMs</option>
           <option value="sell-direct">Sell direct in DMs</option>
         </select>
@@ -132,5 +132,9 @@ $chatsetter-white: #ffffff;
 .follow-up-indicator {
   font-size: 0.75rem;
   cursor: pointer;
+}
+.dropdown-bigger {
+  font-size: 24px !important;
+  font-weight: 500 !important;
 }
 </style>
