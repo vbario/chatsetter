@@ -507,8 +507,12 @@ let addToMessageQueue = async (data) => {
     return resolve('ok')
   })
 }
-let shouldBeSent = async (uid, receiver) => {
+let shouldBeSent = async (uid, receiver, followUp) => {
   return new Promise(async (resolve, reject) => {
+    let followUpModePath = 'followUpMode/' + uid
+    let _followUpMode = await db.ref(followUpModePath).once('value')
+    let followUpMode = _followupMode && followupMode.val()
+    console.log('0', followupMode)
     let _auto_respond_settings = await db.ref('autoRespondSettings/' + (uid || 'f') + '/' + (receiver | 'f')).once('value')
     let auto_respond_settings = _auto_respond_settings && _auto_respond_settings.val()
     let auto_respond = auto_respond_settings !== false
@@ -519,7 +523,7 @@ let shouldBeSent = async (uid, receiver) => {
     let _sequenceStatus = await db.ref('sequences/' + uid + '/0/active').once('value')
     let sequenceStatus = _sequenceStatus && _sequenceStatus.val()
     console.log('3', sequenceStatus)
-    return resolve(auto_respond && master_switch && sequenceStatus)
+    return resolve(auto_respond && master_switch && sequenceStatus && (followUp ? followUpMode : true))
   })
 }
 let runMessageQueue = async () => {
@@ -632,34 +636,42 @@ let runFollowupQueue = async () => {
           let followUpUser = userConversations[receiver]
           let now = (new Date()).getTime()
           let minutesSinceSent = ((now - followUpUser.time)/1000)/60
-          if (followUpUser.count == 1) {
-            if (minutesSinceSent > 30) {
-              await waitTime(100)
-              await sendFollowup(uid, receiver, 1)
-              let message_queue_ref__ = `/message_queue/${uid || 'f'}/${receiver || 'g'}`
-              await db.ref(message_queue_ref__).set({
-                time: now,
-                count: 2
-              })
-            }
-          } else if (followUpUser.count == 2) {
-            if (minutesSinceSent > 60) {
-              await waitTime(100)
-              await sendFollowup(uid, receiver, 2)
-              let message_queue_ref__ = `/message_queue/${uid || 'f'}/${receiver || 'g'}`
-              await db.ref(message_queue_ref__).set({
-                time: now,
-                count: 3
-              })
-            }
+
+          let _shouldBeSent = await shouldBeSent(uid, receiver)
+          if (!_shouldBeSent) {
+            await waitTime(100)
+            let message_queue_ref__ = `/message_queue/${uid || 'f'}/${receiver || 'g'}`
+            await db.ref(message_queue_ref__).set(null)
           } else {
-            if (minutesSinceSent > 180) {
-              await waitTime(100)
-              await sendFollowup(uid, receiver, 3)
-              let message_queue_ref__ = `/message_queue/${uid || 'f'}/${receiver || 'g'}`
-              await db.ref(message_queue_ref__).set(null)
-            }
-          } 
+            if (followUpUser.count == 1) {
+              if (minutesSinceSent > 30) {
+                await waitTime(100)
+                await sendFollowup(uid, receiver, 1)
+                let message_queue_ref__ = `/message_queue/${uid || 'f'}/${receiver || 'g'}`
+                await db.ref(message_queue_ref__).set({
+                  time: now,
+                  count: 2
+                })
+              }
+            } else if (followUpUser.count == 2) {
+              if (minutesSinceSent > 60) {
+                await waitTime(100)
+                await sendFollowup(uid, receiver, 2)
+                let message_queue_ref__ = `/message_queue/${uid || 'f'}/${receiver || 'g'}`
+                await db.ref(message_queue_ref__).set({
+                  time: now,
+                  count: 3
+                })
+              }
+            } else {
+              if (minutesSinceSent > 180) {
+                await waitTime(100)
+                await sendFollowup(uid, receiver, 3)
+                let message_queue_ref__ = `/message_queue/${uid || 'f'}/${receiver || 'g'}`
+                await db.ref(message_queue_ref__).set(null)
+              }
+            } 
+          }
         }
       }
   })
