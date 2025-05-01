@@ -1,15 +1,15 @@
 <template>
     <div class="flex items-center gap-8">
-      <NuxtLink to="/solutions">
+      <a href="#features">
         <p class="landing-link" :class="{'color-text': dark}">
           Solutions
         </p>
-      </NuxtLink>
-      <NuxtLink to="/pricing">
+      </a>
+      <a href="#pricing">
         <p class="landing-link" :class="{'color-text': dark}">
           Pricing
         </p>
-      </NuxtLink>
+      </a>
       <NuxtLink v-show="!$store.state.auth.uid" to="/?register=true">
         <button class="dashboard-button">
           Get Started

@@ -47,7 +47,8 @@ export default {
     background-color: #fcfbf7;
   }
   .no-plan {
-    position: absolute;
+    position: fixed;
+    display: flex;
     top: 0;
     left: 0;
     width: 100%;

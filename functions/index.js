@@ -511,8 +511,8 @@ let shouldBeSent = async (uid, receiver, followUp) => {
   return new Promise(async (resolve, reject) => {
     let followUpModePath = 'followUpMode/' + uid
     let _followUpMode = await db.ref(followUpModePath).once('value')
-    let followUpMode = _followupMode && followupMode.val()
-    console.log('0', followupMode)
+    let followUpMode = _followUpMode && _followUpMode.val()
+    console.log('0', followUpMode)
     let _auto_respond_settings = await db.ref('autoRespondSettings/' + (uid || 'f') + '/' + (receiver | 'f')).once('value')
     let auto_respond_settings = _auto_respond_settings && _auto_respond_settings.val()
     let auto_respond = auto_respond_settings !== false
@@ -523,7 +523,8 @@ let shouldBeSent = async (uid, receiver, followUp) => {
     let _sequenceStatus = await db.ref('sequences/' + uid + '/0/active').once('value')
     let sequenceStatus = _sequenceStatus && _sequenceStatus.val()
     console.log('3', sequenceStatus)
-    return resolve(auto_respond && master_switch && sequenceStatus && (followUp ? followUpMode : true))
+    let thisShouldBeSent = auto_respond && master_switch && sequenceStatus && (followUp ? followUpMode : true)
+    return resolve(thisShouldBeSent)
   })
 }
 let runMessageQueue = async () => {
@@ -545,6 +546,7 @@ let runMessageQueue = async () => {
               console.log('Sending message for this url entry:', message_queue_ref__)
 
               let _shouldBeSent = await shouldBeSent(uid, receiver)
+              console.log('_shouldBeSent', _shouldBeSent)
               if (_shouldBeSent) {
                 if (followUpUser.fromComment) {
                   let {
@@ -637,7 +639,7 @@ let runFollowupQueue = async () => {
           let now = (new Date()).getTime()
           let minutesSinceSent = ((now - followUpUser.time)/1000)/60
 
-          let _shouldBeSent = await shouldBeSent(uid, receiver)
+          let _shouldBeSent = await shouldBeSent(uid, receiver, true)
           if (!_shouldBeSent) {
             await waitTime(100)
             let message_queue_ref__ = `/message_queue/${uid || 'f'}/${receiver || 'g'}`
@@ -1278,6 +1280,7 @@ let getKeywordsArray = async (uid) => {
     let keywordsArray = (keywords || '').split(',').map((v) => {
       return v.toLowerCase().trim()
     })
+    return resolve(keywordsArray)
   })
 }
 let getAllenIds = async (instagram_receiver_id, instagram_sender_id) => {
@@ -1710,14 +1713,13 @@ function parseWebhookNotification(data) {
 
     // 2a. Comment
     // If there's a comment_id, assume it's a comment
-    if (value && value.comment_id) {
+    if (value) {
       // result.sender = value?.from?.id ?? null;
-      result.sender = value ? (value.from ? value.from.id : null) : null
-      // For comments, `post_id` could serve as the 'receiver' or target content
-      // result.receiver = value?.post_id ?? null;
-      result.receiver = value ? value.post_id : null
-      // result.message = value?.message ?? null;
-      result.message = value ? value.message : null
+      result.sender = value.from ? value.from.id : null
+      result.senderUsername = value.from ? value.from.username : null
+      result.receiver = result.entryOn
+      result.commentId = value.id || null
+      result.message = value.text || null
       result.type = 'comment'
       return result
     }
@@ -2019,27 +2021,36 @@ let shouldRespondToMessage = async (data) => {
 }
 let shouldRespondToComment = async (data) => {
   return new Promise(async (resolve, reject) => {
-    let {body, entryOnId, instagram_sender_id, receiver_allen_id, senderUsername} = data
+    let {body, entryOnId, instagram_sender_id, receiver_allen_id, senderUsername, message} = data
 
-    // if I'm commenting to myself
-    if (body.entry[0].changes[0].value.from.id == entryOnId) {
-      return resolve(false)
-    }
-    // return if I'm commenting on my own post
-    if (entryOnId == instagram_sender_id) {
-      return resolve(false)
-    }
+    // // if I'm commenting to myself
+    // if (body.entry[0].changes[0].value.from.id == entryOnId) {
+    //   return resolve(false)
+    // }
+
+    // // return if I'm commenting on my own post
+    // if (entryOnId == instagram_sender_id) {
+    //   return resolve(false)
+    // }
+
+    console.log('A1')
     let noRespond = await noRespondTo(receiver_allen_id, senderUsername)
     if (noRespond) {
       return resolve(false)
     }
+    console.log('A2', receiver_allen_id)
     let _keywords = await db.ref('commentTriggerKeywords/' + (receiver_allen_id || 'f')).once('value')
     let keywords = _keywords && _keywords.val()
+    console.log('A2.5', receiver_allen_id)
     let keywordsArray = await getKeywordsArray(receiver_allen_id)
-    let _text = body.entry[0].changes[0].value ? body.entry[0].changes[0].value.text : '-'
+    console.log('A3')
+
+    let _text = message
     if (!(!keywords || (keywordsArray.indexOf(_text.toLowerCase()) > - 1))) {
       return resolve(false)
     }
+    console.log('A4')
+
     return resolve(true)
   })
 }
@@ -2624,13 +2635,11 @@ exports.igcallback = functions.https.onRequest((req, res) => {
       let isComment = body.entry[0].changes
       let isMessage = body.entry[0].messaging
       let notification = parseWebhookNotification(body)
-      console.log('notification')
-      console.log(notification)
 
       let entryOnId = notification.entryOn || 'f'
       if (isMessage) {
-        let instagram_sender_id = notification.sender || 'g'
-        let instagram_receiver_id = notification.receiver || 'g'
+        let instagram_sender_id = notification.sender || 'f'
+        let instagram_receiver_id = notification.receiver || 'f'
         if (entryOnId == instagram_receiver_id) {
           let allenIds = await getAllenIds(instagram_receiver_id, instagram_sender_id)
           let {receiver_allen_id, sender_allen_id} = allenIds
@@ -2645,32 +2654,45 @@ exports.igcallback = functions.https.onRequest((req, res) => {
           }
         }
       } else if (isComment) {
-        let instagram_sender_id = body.entry[0].changes[0].value.from.id
-        let instagram_receiver_id = notification.receiver || 'g'
+        let instagram_sender_id = notification.sender || 'f'
+        let instagram_receiver_id = notification.receiver || 'f'
+        console.log('isComment')
+        console.log(entryOnId, instagram_receiver_id)
         if (entryOnId == instagram_receiver_id) {
-          let allenIds = await getAllenIds(instagram_receiver_id, instagram_sender_id)
-          let {receiver_allen_id, sender_allen_id} = allenIds
-          await getConversationsUsers(receiver_allen_id, false, false, 10)
-          await checkAutoResponder(receiver_allen_id, instagram_sender_id)
-          let comment_id = body.entry[0].changes[0].value.id
-          let senderUsername = body.entry[0].changes[0].value.from.username
-          let _shouldRespondToComment = await shouldRespondToComment({body, entryOnId, instagram_sender_id, receiver_allen_id, senderUsername})
-          if (_shouldRespondToComment) {
-            let myInstagramInfo = await getMyInstagramInfo(receiver_allen_id)
-            let instagram_username = myInstagramInfo.username
-            let _text = body.entry[0].changes[0].value ? body.entry[0].changes[0].value.text : '-'
-            await addToMessageQueue({
-              uid: receiver_allen_id,
-              receiver_instagram_id: instagram_sender_id,
-              fromComment: {
-                comment_id: body.entry[0].changes[0].value.id.toString(),
-                sender_allen_uid: receiver_allen_id,
-                sender_converstion_id: false,
-                receiver_instagram_id: instagram_receiver_id,
-                sender_instagram_username: instagram_username
-              }
+          if (instagram_receiver_id !== instagram_sender_id) {
+            let allenIds = await getAllenIds(instagram_receiver_id, instagram_sender_id)
+            let {receiver_allen_id, sender_allen_id} = allenIds
+            await getConversationsUsers(receiver_allen_id, false, false, 10)
+            await checkAutoResponder(receiver_allen_id, instagram_sender_id)
+            let comment_id = notification.commentId
+            let senderUsername = notification.senderUsername
+            console.log('=>', comment_id, senderUsername)
+            let _shouldRespondToComment = await shouldRespondToComment({
+              message: notification.message,
+              body,
+              entryOnId,
+              instagram_sender_id,
+              receiver_allen_id,
+              senderUsername
             })
-            // await sendOneMessage({uid: receiver_allen_id, receiver_instagram_id: instagram_sender_id})
+            console.log('_shouldRespondToComment', _shouldRespondToComment)
+            if (_shouldRespondToComment) {
+              let myInstagramInfo = await getMyInstagramInfo(receiver_allen_id)
+              let instagram_username = myInstagramInfo.username
+              let _text = notification.message
+              await addToMessageQueue({
+                uid: receiver_allen_id,
+                receiver_instagram_id: instagram_sender_id,
+                fromComment: {
+                  comment_id: notification.commentId.toString(),
+                  sender_allen_uid: receiver_allen_id,
+                  sender_converstion_id: false,
+                  receiver_instagram_id: instagram_receiver_id,
+                  sender_instagram_username: instagram_username
+                }
+              })
+              // await sendOneMessage({uid: receiver_allen_id, receiver_instagram_id: instagram_sender_id})
+            }
           }
         }
       }

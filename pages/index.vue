@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col w-full">
+  <div class="flex flex-col w-full" id="top">
     
     <div class="container h-screen-almost mx-auto flex _1024">
       <div class="flex-1 flex flex-col justify-center items-center relative">
@@ -38,8 +38,10 @@
           <div class="_s">
             <div class="space-x-4">
               <h2 class="text-lg text-purple-600 font-bold mb-4">Get started with ChatSetter!</h2>
-              <NuxtLink class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg" to="/?register=true">
-                Start 5-Day Free Trial
+              <NuxtLink class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg" to="/?register=true#top">
+                <a @click="goToTop()">
+                  Start 5-Day Free Trial
+                </a>
               </NuxtLink>
               <a href="#features" class="inline-block text-purple-600 font-semibold py-3 px-6">
                 See How It Works →
@@ -134,9 +136,11 @@
         <div class="container mx-auto px-6 text-center">
           <h2 class="text-4xl font-bold mb-4">Ready to rocket your bookings?</h2>
           <p class="mb-8 text-lg">Start your 5-day free trial today. Cancel anytime.</p>
-          <a href="#pricing" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg">
-            Start Free Trial
-          </a>
+          <NuxtLink to="/?register=true#top" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg">
+            <a @click="goToTop()">
+              Start Free Trial
+            </a>
+          </NuxtLink>
         </div>
       </section>
 
@@ -151,7 +155,7 @@
               I built ChatSetter to solve my own DM overload—and it’s already booked hundreds of calls
               for folks just like you.
             </p>
-            <NuxtLink class="text-purple-600 font-semibold" to="/pricing">See Plans & Pricing →</NuxtLink>
+            <a class="text-purple-600 font-semibold" href="#pricing">See Plans & Pricing →</a>
           </div>
         </div>
       </section>
@@ -164,39 +168,42 @@
             <!-- Starter -->
             <div class="bg-white p-6 rounded-lg shadow-lg">
               <h3 class="text-xl font-semibold mb-4">Starter</h3>
-              <p class="text-4xl font-bold mb-4">$29<span class="text-lg">/mo</span></p>
+              <p class="text-4xl font-bold mb-4">$99<span class="text-lg">/mo</span></p>
               <ul class="space-y-2 text-gray-600 mb-6">
-                <li>100 DMs/month</li>
-                <li>Auto-booking</li>
-                <li>Email support</li>
+                <li>750 DMs/month</li>
+                <li>Unlimited followups</li>
+                <li>Unlimited comments</li>
+                <li>Auto-book calls & sell digital products</li>
               </ul>
-              <a href="#" class="block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded">
+              <a href="#" @click="goToTop()" class="block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded">
                 Start Free Trial
               </a>
             </div>
             <!-- Growth -->
             <div class="bg-white p-6 rounded-lg shadow-lg border-4 border-purple-600">
-              <h3 class="text-xl font-semibold mb-4">Growth</h3>
-              <p class="text-4xl font-bold mb-4">$79<span class="text-lg">/mo</span></p>
+              <h3 class="text-xl font-semibold mb-4">Influencer</h3>
+              <p class="text-4xl font-bold mb-4">$299<span class="text-lg">/mo</span></p>
               <ul class="space-y-2 text-gray-600 mb-6">
-                <li>500 DMs/month</li>
+                <li>3,000 DMs/month</li>
+                <li>Fine-tuned prompts & script generation</li>
                 <li>Priority booking</li>
-                <li>Chat analytics</li>
+                <li>Onboarding call</li>
               </ul>
-              <a href="#" class="block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded">
+              <a href="#" @click="goToTop()" class="block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded">
                 Start Free Trial
               </a>
             </div>
             <!-- Pro -->
             <div class="bg-white p-6 rounded-lg shadow-lg">
-              <h3 class="text-xl font-semibold mb-4">Pro</h3>
-              <p class="text-4xl font-bold mb-4">$149<span class="text-lg">/mo</span></p>
+              <h3 class="text-xl font-semibold mb-4">Growth</h3>
+              <p class="text-4xl font-bold mb-4">$999<span class="text-lg">/mo</span></p>
               <ul class="space-y-2 text-gray-600 mb-6">
-                <li>Unlimited DMs</li>
-                <li>Dedicated support</li>
-                <li>Custom integrations</li>
+                <li>12,000 DMs/month</li>
+                <li>Account manager</li>
+                <li>Affiliate program access</li>
+                <li>GoHighLevel & Calendly integration</li>
               </ul>
-              <a href="#" class="block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded">
+              <a href="#" @click="goToTop()" class="block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded">
                 Start Free Trial
               </a>
             </div>
@@ -239,6 +246,17 @@
         </div>
       </section>
 
+      <!-- Call to Action Section -->
+      <section class="cta bg-gray-100 py-16 text-center">
+        <h2 class="text-4xl font-bold mb-4">Ready to Level Up Your Influence?</h2>
+        <p class="text-lg mb-8">Join the creators who trust ChatSetter to power their conversations.</p>
+        <NuxtLink to="/?register=true#top" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg">
+            <a @click="goToTop()">
+              Start Free Trial
+            </a>
+        </NuxtLink>
+      </section>
+
       <!-- Footer -->
       <footer class="bg-gray-800 text-gray-400 py-8">
         <div class="container mx-auto px-6 text-center text-sm">
@@ -266,6 +284,14 @@ export default {
         console.log('register')
         this.startingTab = 'register'
       }
+    }
+  },
+  methods: {
+    goToTop () {
+      console.log('goToTop')
+      setTimeout(() => {
+        window.scrollTo(0, 0)
+      }, 200)
     }
   },
   mounted () {
