@@ -180,7 +180,10 @@ let sendCommentResponse = async (data, t2, delay) => {
       sender_instagram_username
     } = data
 
+    console.log('getAccessToken')
+
     let token = await getAccessToken(sender_allen_uid)
+    console.log('token', token)
 
     let possibleResponses = [
       'check your DMs',
@@ -189,9 +192,10 @@ let sendCommentResponse = async (data, t2, delay) => {
     ]
     let selectedResponseIndex = Math.floor(Math.random() * possibleResponses.length)
     let selectedResponse = possibleResponses[selectedResponseIndex]
+    console.log('token', token)
     const url = `https://graph.instagram.com/v21.0/${comment_id}/replies`;
     const headers = {
-        'Authorization': `Bearer ${token.access_token}`,
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
     }
 
@@ -201,6 +205,7 @@ let sendCommentResponse = async (data, t2, delay) => {
 
     axios.post(url, _data, { headers })
     .then(async (response) => {
+      console.log('Z2')
       // let message_id = response.data.message_id
       // let comment_reply_tracking_ref = 'comment_reply_tracking/' + (uid || 'f')
       // await db.ref(comment_reply_tracking_ref).push({
@@ -293,15 +298,25 @@ let sendNLQtoGHL = async (igid, code) => {
 // sendNLQtoGHL('1231242354235234', 'goal_completed')
 let sendOneMessage = (data) => { // {uid, conversationId, receiver_instagram_id}
     return new Promise(async (resolve, reject) => {
-      let uid = data.uid
-      let activeConversationReceiver = data.receiver_instagram_id
+      let {uid, receiver_instagram_id, fromComment} = data
       console.log('sendOneMessage data', data)
+      let aiResponse
       let instagram_username = await getMyUsername(uid)
-      let conversationMessages = await getOneConversationMessagesB(uid, activeConversationReceiver)
-      let conversationAnalysis = await analyzeInput(conversationMessages, instagram_username)
-      await handleAnalysis(conversationAnalysis, uid, activeConversationReceiver)
-      let aiResponse = await getChatResponse({messages: conversationMessages}, uid, instagram_username)
-      console.log('aiResponse:', aiResponse.content && aiResponse.content[0] && aiResponse.content[0].text)
+      let conversationMessages = await getOneConversationMessagesB(uid, receiver_instagram_id)
+      if (fromComment) {
+        console.log('X1')
+        let commentReplies = [
+          'Hey got your comment. Would love to tell you more about ChatSetter :) What got you reaching out?'
+        ]
+        aiResponse = commentReplies[Math.floor(Math.random() * commentReplies.length)]
+      } else {
+        console.log('X2')
+        // let conversationAnalysis = await analyzeInput(conversationMessages, instagram_username)
+        // await handleAnalysis(conversationAnalysis, uid, activeConversationReceiver)
+        console.log('conversationMessages', conversationMessages)
+        aiResponse = await getChatResponse({messages: conversationMessages}, uid, instagram_username)
+        console.log('aiResponse:', aiResponse.content && aiResponse.content[0] && aiResponse.content[0].text)
+      }
 
       // // Split long messages into shorter messages
       // let formattedMassages = []
@@ -328,14 +343,23 @@ let sendOneMessage = (data) => { // {uid, conversationId, receiver_instagram_id}
       //     }, true, delayTime + 20000)
       //   }
       // }
-
-      let status = await sendMessage({
+      console.log('X3', aiResponse, {
+        comment_id: fromComment ? fromComment.comment_id : '-',
         sender_allen_uid: uid,
         sender_converstion_id: conversationMessages ? conversationMessages.id : '-',
-        receiver_instagram_id: activeConversationReceiver,
+        receiver_instagram_id: receiver_instagram_id,
         sender_instagram_username: instagram_username,
         message: aiResponse
-      }, true)
+      })
+      let status = await sendMessage({
+        comment_id: fromComment ? fromComment.comment_id : false,
+        sender_allen_uid: uid,
+        sender_converstion_id: conversationMessages ? conversationMessages.id : '-',
+        receiver_instagram_id: receiver_instagram_id,
+        sender_instagram_username: instagram_username,
+        message: aiResponse
+      }, fromComment ? false : true)
+      console.log('done sending message')
 
       return resolve('done')
   })
@@ -512,17 +536,13 @@ let shouldBeSent = async (uid, receiver, followUp) => {
     let followUpModePath = 'followUpMode/' + uid
     let _followUpMode = await db.ref(followUpModePath).once('value')
     let followUpMode = _followUpMode && _followUpMode.val()
-    console.log('0', followUpMode)
     let _auto_respond_settings = await db.ref('autoRespondSettings/' + (uid || 'f') + '/' + (receiver | 'f')).once('value')
     let auto_respond_settings = _auto_respond_settings && _auto_respond_settings.val()
     let auto_respond = auto_respond_settings !== false
-    console.log('1', auto_respond)
     let _master_switch = await db.ref('master_switch').once('value')
     let master_switch = _master_switch && _master_switch.val()
-    console.log('2', master_switch)
     let _sequenceStatus = await db.ref('sequences/' + uid + '/0/active').once('value')
     let sequenceStatus = _sequenceStatus && _sequenceStatus.val()
-    console.log('3', sequenceStatus)
     let thisShouldBeSent = auto_respond && master_switch && sequenceStatus && (followUp ? followUpMode : true)
     return resolve(thisShouldBeSent)
   })
@@ -548,6 +568,9 @@ let runMessageQueue = async () => {
               let _shouldBeSent = await shouldBeSent(uid, receiver)
               console.log('_shouldBeSent', _shouldBeSent)
               if (_shouldBeSent) {
+                await sendOneMessage({uid, receiver_instagram_id: receiver, fromComment: followUpUser.fromComment})
+                await waitTime(5)
+
                 if (followUpUser.fromComment) {
                   let {
                     comment_id,
@@ -556,6 +579,12 @@ let runMessageQueue = async () => {
                     receiver_instagram_id,
                     sender_instagram_username
                   } = followUpUser.fromComment
+                  console.log('Z1')
+                  console.log('comment_id', comment_id)    
+                  console.log('sender_allen_uid', sender_allen_uid)    
+                  console.log('sender_converstion_id', sender_converstion_id)    
+                  console.log('receiver_instagram_id', receiver_instagram_id)    
+                  console.log('sender_instagram_username', sender_instagram_username)                      
                   await sendCommentResponse({
                     comment_id,
                     sender_allen_uid,
@@ -564,8 +593,7 @@ let runMessageQueue = async () => {
                     sender_instagram_username
                   })
                 }
-                await sendOneMessage({uid, receiver_instagram_id: receiver})
-                await waitTime(5)
+
                 await db.ref(message_queue_ref__).set({
                   time: now,
                   count: 1
@@ -688,6 +716,8 @@ let sendMessage = async (data, t2, delay) => {
     let message = data.message
     let isComment = data.isComment || false
 
+    console.log('Y1')
+
     let uid = sender_allen_uid // v@b.com
     let _token = await db.ref('/instagram_tokens_long_lived/' + (uid || 'f')).once('value')
     let token = _token.val()
@@ -700,6 +730,7 @@ let sendMessage = async (data, t2, delay) => {
 
     let _data
     if (comment_id) {
+      console.log('Y2', message, t2)
       _data = {
         message: JSON.stringify({ text: t2 ? (message.content[0] ? message.content[0].text : '') : message }),
         recipient: JSON.stringify({
@@ -716,6 +747,8 @@ let sendMessage = async (data, t2, delay) => {
     }
 
     await waitTime(delay || 0)
+
+    console.log('_data', _data)
 
     const url = `https://graph.instagram.com/v21.0/me/messages`;
     axios.post(url, _data, { headers })
@@ -1181,6 +1214,7 @@ let splitMessage = (textMessage) => {
     }
     return splitResponse
 }
+
 // conversations
 let getConversations = async (uid) => {
     return new Promise(async (resolve, reject) => {
@@ -1285,6 +1319,9 @@ let getKeywordsArray = async (uid) => {
 }
 let getAllenIds = async (instagram_receiver_id, instagram_sender_id) => {
   return new Promise(async (resolve, reject) => {
+    console.log('getAllenIds')
+    console.log('instagram_receiver_id', instagram_receiver_id)
+    console.log('instagram_sender_id', instagram_sender_id)
     let _receiver_allen_id = await db.ref('instagram_details').orderByChild('id2').equalTo(instagram_receiver_id).once('value')
     let _sender_allen_id = await db.ref('instagram_details').orderByChild('id2').equalTo(instagram_sender_id).once('value')
     let __receiver_allen_id = _receiver_allen_id.val() // 1
@@ -1656,7 +1693,7 @@ async function getMyInstagramInfo(uid) {
     })
     .then(async (response) => {
         // save Instagram Data
-        await db.ref('/instagram_details/' + (uid || 'f')).set(response.data)
+        await db.ref('/instagram_details/' + (uid || 'f')).update(response.data)
         return resolve(response.data)
     })
     .catch(error => {
@@ -2033,24 +2070,17 @@ let shouldRespondToComment = async (data) => {
     //   return resolve(false)
     // }
 
-    console.log('A1')
     let noRespond = await noRespondTo(receiver_allen_id, senderUsername)
     if (noRespond) {
       return resolve(false)
     }
-    console.log('A2', receiver_allen_id)
     let _keywords = await db.ref('commentTriggerKeywords/' + (receiver_allen_id || 'f')).once('value')
     let keywords = _keywords && _keywords.val()
-    console.log('A2.5', receiver_allen_id)
     let keywordsArray = await getKeywordsArray(receiver_allen_id)
-    console.log('A3')
-
     let _text = message
     if (!(!keywords || (keywordsArray.indexOf(_text.toLowerCase()) > - 1))) {
       return resolve(false)
     }
-    console.log('A4')
-
     return resolve(true)
   })
 }
@@ -2635,17 +2665,19 @@ exports.igcallback = functions.https.onRequest((req, res) => {
       let isComment = body.entry[0].changes
       let isMessage = body.entry[0].messaging
       let notification = parseWebhookNotification(body)
+      console.log('notification', notification)
 
       let entryOnId = notification.entryOn || 'f'
       if (isMessage) {
         let instagram_sender_id = notification.sender || 'f'
         let instagram_receiver_id = notification.receiver || 'f'
         if (entryOnId == instagram_receiver_id) {
+          console.log('instagram_receiver_id, instagram_sender_id', instagram_receiver_id, instagram_sender_id)
           let allenIds = await getAllenIds(instagram_receiver_id, instagram_sender_id)
+          console.log('allenIds', allenIds)
           let {receiver_allen_id, sender_allen_id} = allenIds
           await getConversationsUsers(receiver_allen_id, false, false, 10)
           await checkAutoResponder(receiver_allen_id, instagram_sender_id)
-          console.log('allenIds', allenIds)
           let senderUsername = await getInstagramUsernameById(receiver_allen_id, instagram_sender_id)
           let _shouldRespondToMessage = await shouldRespondToMessage({body, receiver_allen_id, senderUsername, instagram_sender_id})
           if (_shouldRespondToMessage) {
@@ -2677,8 +2709,7 @@ exports.igcallback = functions.https.onRequest((req, res) => {
             })
             console.log('_shouldRespondToComment', _shouldRespondToComment)
             if (_shouldRespondToComment) {
-              let myInstagramInfo = await getMyInstagramInfo(receiver_allen_id)
-              let instagram_username = myInstagramInfo.username
+              let instagram_username = await getMyUsername(receiver_allen_id)
               let _text = notification.message
               await addToMessageQueue({
                 uid: receiver_allen_id,
